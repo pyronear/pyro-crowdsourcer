@@ -12,10 +12,15 @@ import streamlit as st
 def main():
 
     # Wide mode
-    st.set_page_config(layout="wide")
+    st.set_page_config(
+        page_title="Pyronear - Wildfire image crowdsourcing",
+        page_icon="https://raw.githubusercontent.com/pyronear/pyronear.github.io/master/img/favicon.ico",
+        layout="wide",
+    )
 
     # Designing the interface
-    st.title("Wildfire data collector")
+    st.title("Wildfire image crowdsourcing")
+    st.write("The image you upload here will be used to create a public image dataset for wildfire detection.")
     # Set the columns
     cols = st.columns((2, 1))
     cols[0].subheader("Input image")
@@ -30,6 +35,10 @@ def main():
     uploaded_file = st.sidebar.file_uploader("Upload files", type=['png', 'jpeg', 'jpg'])
     submitted = False
     if uploaded_file is not None:
+        st.warning(
+            "By clicking the 'Submit' button, you hereby declare that you are authorized to share this picture "
+            "and forsake all the rights of exclusive exploitation of this content."
+        )
         img = uploaded_file.read()
         cols[0].image(img)
         form = cols[1].form("Image information")
