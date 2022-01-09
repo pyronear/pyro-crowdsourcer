@@ -3,7 +3,9 @@
 # This program is licensed under the Apache License version 2.
 # See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0.txt> for full license details.
 
+import time
 from datetime import date
+
 import streamlit as st
 
 
@@ -50,7 +52,7 @@ def main():
             with st.spinner('Uploading...'):
 
                 # Call API to send image + labels
-                a = 1
+                time.sleep(.5)
             st.success('Thanks for your upload!')
             st.balloons()
 
