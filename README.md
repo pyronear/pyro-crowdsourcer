@@ -24,7 +24,7 @@ pip install -r pyro-crowdsourcer/requirements.txt
 
 ## Usage
 
-![App screenshot](https://user-images.githubusercontent.com/26927750/148696317-977865ba-6d7a-4fae-a2e7-418208c8844b.png)
+![App screenshot](https://user-images.githubusercontent.com/26927750/148696958-bdc91784-cd3d-40e2-88c8-4ef74d309730.png)
 
 The app was designed using [Streamlit](https://streamlit.io/) to crowdsource visual situations that can be encountered for wildfire surveillance.
 
