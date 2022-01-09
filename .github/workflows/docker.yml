@@ -1,0 +1,19 @@
+name: docker
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  docker-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build docker image
+        run: docker build . -t pyro-crowdsourcer:py3.8.1-slim
+      - name: Run docker container
+        run: docker run -d -p 8001:8501 pyro-crowdsourcer:py3.8.1-slim
+      - name: Check docker sanity
+        run: curl http://localhost:8001/
