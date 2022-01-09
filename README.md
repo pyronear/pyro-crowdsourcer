@@ -2,7 +2,7 @@
   <img src="https://pyronear.org/img/logo_letters.png" width="60%">
 </p>
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE) ![Test Status](https://github.com/pyronear/pyro-crowdsourcer/workflows/tests/badge.svg)  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1c73a45c6b3f4bc88c6725d50a2771fe)](https://www.codacy.com/gh/pyronear/pyro-crowdsourcer/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pyronear/pyro-crowdsourcer&amp;utm_campaign=Badge_Grade)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE) ![Test Status](https://github.com/pyronear/pyro-crowdsourcer/workflows/tests/badge.svg)  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1c73a45c6b3f4bc88c6725d50a2771fe)](https://www.codacy.com/gh/pyronear/pyro-crowdsourcer/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pyronear/pyro-crowdsourcer&amp;utm_campaign=Badge_Grade) [![CodeFactor](https://www.codefactor.io/repository/github/pyronear/pyro-crowdsourcer/badge)](https://www.codefactor.io/repository/github/pyronear/pyro-crowdsourcer)
 
 
 
