@@ -16,4 +16,4 @@ jobs:
       - name: Run docker container
         run: docker run -d -p 8001:8501 pyro-crowdsourcer:py3.8.1-slim
       - name: Check docker sanity
-        run: curl http://localhost:8001/
+        run: sleep 10 && curl http://localhost:8001/
