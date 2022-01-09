@@ -22,16 +22,13 @@ pip install -r pyro-crowdsourcer/requirements.txt
 ```
 
 
+## Usage
 
-
-## More goodies
-
-
-### Data collection app
+![App screenshot](https://user-images.githubusercontent.com/26927750/148696317-977865ba-6d7a-4fae-a2e7-418208c8844b.png)
 
 The app was designed using [Streamlit](https://streamlit.io/) to crowdsource visual situations that can be encountered for wildfire surveillance.
 
-#### Running it locally
+### Running it locally
 
 Run your app in your default browser with:
 
@@ -40,14 +37,13 @@ streamlit run src/app.py
 ```
 
 
-
-
-### Docker container
+## Docker container
 
 If you wish to deploy containerized environments, you can use the provided Dockerfile to build a docker image:
 
 ```shell
 docker build . -t <YOUR_IMAGE_TAG>
+docker run -d -p 8001:8501 <YOUR_IMAGE_TAG>
 ```
 
 
