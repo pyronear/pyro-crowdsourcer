@@ -2,7 +2,7 @@
   <img src="https://pyronear.org/img/logo_letters.png" width="60%">
 </p>
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE) ![Test Status](https://github.com/pyronear/pyro-crowdsourcer/workflows/tests/badge.svg)  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/340a76749b634586a498e1c0ab998f08)](https://app.codacy.com/gh/mindee/doctr?utm_source=github.com&utm_medium=referral&utm_content=mindee/doctr&utm_campaign=Badge_Grade) [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/mindee/doctr) 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE) ![Test Status](https://github.com/pyronear/pyro-crowdsourcer/workflows/tests/badge.svg)  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1c73a45c6b3f4bc88c6725d50a2771fe)](https://www.codacy.com/gh/pyronear/pyro-crowdsourcer/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pyronear/pyro-crowdsourcer&amp;utm_campaign=Badge_Grade)
 
 
 
