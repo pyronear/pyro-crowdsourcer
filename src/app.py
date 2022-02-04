@@ -49,8 +49,8 @@ def main():
     submitted = False
     if uploaded_file is not None:
         st.warning(
-            "By clicking the 'Submit' button, you hereby declare that you are authorized to share this picture "
-            "and forsake all the rights of exclusive exploitation of this content."
+            """En partageant cette photo, vous adhérez à la démarche Pyronear """
+            """de construction d'un jeu de données collaboratif."""
         )
         img = uploaded_file.read()
         cols[0].image(img)
