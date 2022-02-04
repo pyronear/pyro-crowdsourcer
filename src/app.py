@@ -27,12 +27,24 @@ def main():
     cols[1].subheader("Image tags")
 
     # Sidebar
-    # File selection
-    st.sidebar.title("Image selection")
+    st.sidebar.image("src/static/logo_letters.png")
+
+    # new line
+    st.sidebar.write('\n')
+
+    st.sidebar.markdown("""**A propos de Pyronear** - Pyronear est une association loi 1901, uniquement constituée \
+    de bénévoles, qui a pour objet la préservation des espaces naturels contre les risques d’incendies, \
+    et autres aléas naturels. \n \n Pour cela, nous nous efforçons de trouver des solutions technologiques \
+    performantes, accessibles, open-source et abordables pour la protection contre les risques naturels. """)
+
+    st.sidebar.write('\n')
+    st.sidebar.markdown("""[Site Web](https://pyronear.org/) | [contact](contact@pyronear.org)""")
+
     # Disabling warning
     st.set_option('deprecation.showfileUploaderEncoding', False)
+
     # Choose your own image
-    uploaded_file = st.sidebar.file_uploader("Upload files", type=['png', 'jpeg', 'jpg'])
+    uploaded_file = cols[0].file_uploader("Upload files", type=['png', 'jpeg', 'jpg'])
     submitted = False
     if uploaded_file is not None:
         st.warning(
