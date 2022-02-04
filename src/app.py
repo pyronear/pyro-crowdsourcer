@@ -20,12 +20,14 @@ def main():
     )
 
     # Designing the interface
-    st.title("Wildfire image crowdsourcing")
-    st.write("The image you upload here will be used to create a public image dataset for wildfire detection.")
+    st.title("Collecte de photos de feux de forêt")
+    st.write("La photo que vous partagez ici sera utilisée pour créer un jeu de données public "
+             "pour la detection de feux de forêts")
+
     # Set the columns
     cols = st.columns((2, 1))
-    cols[0].subheader("Input image")
-    cols[1].subheader("Image tags")
+    cols[0].subheader("Selection de la photo")
+    cols[1].subheader("Informations de la photo")
 
     # Sidebar
     st.sidebar.image("src/static/logo_letters.png")
@@ -39,7 +41,7 @@ def main():
     performantes, accessibles, open-source et abordables pour la protection contre les risques naturels. """)
 
     st.sidebar.write('\n')
-    st.sidebar.markdown("""[Site Web](https://pyronear.org/) | [contact](contact@pyronear.org)""")
+    st.sidebar.markdown("""[Site Web](https://pyronear.org/) | [contact](mailto:contact@pyronear.org)""")
 
     # Disabling warning
     st.set_option('deprecation.showfileUploaderEncoding', False)
@@ -54,12 +56,12 @@ def main():
         )
         img = uploaded_file.read()
         cols[0].image(img)
-        form = cols[1].form("Image information")
-        form.date_input("Date of the picture", max_value=date.today())
-        form.time_input("Approx time of the picture")
-        form.text_input("Where was this taken?")
-        form.multiselect("Event tags", ["smoke", "flames"])
-        submitted = form.form_submit_button("Submit")
+        form = cols[1].form("Information de la photo")
+        form.date_input("Date de la photo", max_value=date.today())
+        form.time_input("Heure approximative")
+        form.text_input("Où a-t-elle été prise ?")
+        form.multiselect("Étiquettes", ["fumée", "flammes"])
+        submitted = form.form_submit_button("Envoyer")
 
     # Find out more section
     with st.expander("En savoir plus sur notre démarche de construction d'un dataset collaboratif"):
@@ -69,15 +71,15 @@ def main():
     if submitted:
 
         if uploaded_file is None:
-            st.sidebar.write("Please upload an image")
+            cols[0].write("Veuillez charger une photo")
 
         else:
 
-            with st.spinner('Uploading...'):
+            with st.spinner('Envoi en cours ...'):
 
                 # Call API to send image + labels
                 time.sleep(.5)
-            st.success('Thanks for your upload!')
+            st.success("Merci pour l'envoi !")
             st.balloons()
 
 
