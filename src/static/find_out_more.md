@@ -64,29 +64,3 @@ aux risques d’incendies.
 peuvent soutenir la cohabitation entre l’homme et son habitat naturel. 
 
 C’est donc une opportunité d’embarquer dans une aventure associative au service du bien commun.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
