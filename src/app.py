@@ -5,6 +5,7 @@
 
 import time
 from datetime import date
+from pathlib import Path
 
 import streamlit as st
 
@@ -60,8 +61,10 @@ def main():
         form.multiselect("Event tags", ["smoke", "flames"])
         submitted = form.form_submit_button("Submit")
 
-    # For newline
-    st.sidebar.write('\n')
+    # Find out more section
+    with st.expander("En savoir plus sur notre démarche de construction d'un dataset collaboratif"):
+        st.markdown(Path("/src/static/find_out_more.md").read_text())
+
 
     if submitted:
 
