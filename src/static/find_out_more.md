@@ -13,9 +13,11 @@ Nous souhaitons permettre davantage d’implication citoyenne dans notre projet.
 Un élément essentiel de notre solution de détection précoce de départ de feux, c’est un algorithme de deep learning 
 (vous pouvez l’appeler Intelligence artificielle, certains trouvent que c’est plus à la mode), 
 capable de discerner un départ de feux sur une image. 
-Plus cet algorithme aura vu d’images de départ de feux dans des situations différentes, meilleur il sera. 
+Plus cet algorithme aura vu d’images avec une vue surplombante sur la forêt, 
+avec et sans départs de feux,
+dans des situations différentes, meilleur il sera. 
 
-Par conséquent, partager des images de départ de feux, c’est nous aider 
+Par conséquent, partager des images de forêt avec ou sans fumées/flammes, c’est nous aider 
 et contribuer à la préservation des espaces naturels. Merci beaucoup !
 
 
