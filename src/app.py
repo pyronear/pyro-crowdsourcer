@@ -64,8 +64,8 @@ def main():
         form = cols[1].form("Information de la photo")
         form.date_input("Date de la photo", max_value=date.today())
         form.time_input("Heure approximative")
+
         #departement selection
-        # https://www.data.gouv.fr/fr/datasets/r/7b4bc207-4e66-49d2-b1a5-26653e369b66
         with open("src/static/departements-region.json") as deps:
             dpt = json.load(deps)
 
