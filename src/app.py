@@ -30,7 +30,7 @@ def main():
 
     # Set the columns
     cols = st.columns((2, 1))
-    cols[0].subheader("Selection de la photo")
+    cols[0].subheader("Sélection de la photo")
     cols[1].subheader("Informations de la photo")
 
     # Sidebar
