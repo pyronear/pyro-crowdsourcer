@@ -4,12 +4,12 @@
 # See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0.txt> for full license details.
 
 import time
-import json
 from datetime import date
 from pathlib import Path
 
 import streamlit as st
 
+import config
 
 def main():
 
@@ -61,17 +61,11 @@ def main():
         )
         img = uploaded_file.read()
         cols[0].image(img)
+
         form = cols[1].form("Information de la photo")
         form.date_input("Date de la photo", max_value=date.today())
         form.time_input("Heure approximative")
-
-        #departement selection
-        with open("src/static/departements-region.json") as deps:
-            dpt = json.load(deps)
-
-        deps = [str(d["num_dep"]) + " - " + d["dep_name"] for d in dpt]
-        form.selectbox("Département", deps)
-
+        form.selectbox("Département", config.deps)
         form.multiselect("Étiquettes", ["fumée", "flammes"])
         submitted = form.form_submit_button("Envoyer")
 
