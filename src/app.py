@@ -26,8 +26,6 @@ def main():
              "pour la detection de feux de forêts.")
     st.write("Idéalement partagez nous une photo depuis une vue assez dégagée sur une zone forestière,"
              " avec et/ou sans flammes/fumées")
-    #st.write("Lorsque vous partagez une photo de départ de feux, n'hésitez pas à "
-    #        "également partager une photo du même point de vue sans fumées ou flammes.")
 
     # Set the columns
     cols = st.columns((2, 1))
