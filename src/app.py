@@ -11,6 +11,7 @@ import streamlit as st
 
 import config
 
+
 def main():
 
     # Wide mode
