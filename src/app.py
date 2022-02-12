@@ -45,7 +45,7 @@ def main():
     performantes, accessibles, open-source et abordables pour la protection contre les risques naturels. """)
 
     st.sidebar.write('\n')
-    st.sidebar.markdown("""[Site Web](https://pyronear.org/) | [contact](mailto:contact@pyronear.org)""")
+    st.sidebar.markdown("""[Site Web](https://pyronear.org/)""")
 
     # Disabling warning
     st.set_option('deprecation.showfileUploaderEncoding', False)

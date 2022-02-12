@@ -47,7 +47,7 @@ Celui de cette application se trouve juste ici.
 
 Toute énergie positive est la bienvenue pour nous aider à faire avancer ce projet.
 
-N’hésitez pas à nous contacter sur les réseaux ou par mail à [contact@pyronear.org](mailto:contact@pyronear.org).
+N’hésitez pas à nous contacter sur les réseaux ou via le [formulaire de notre site web](https://pyronear.org/#contact).
 
 [linkedin](https://www.linkedin.com/company/pyronearfr) | [github]( https://github.com/pyronear) | 
 [twitter](https://twitter.com/pyro_near) | [facebook](https://www.facebook.com/pyronear)
