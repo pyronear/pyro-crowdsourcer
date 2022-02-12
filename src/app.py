@@ -21,17 +21,15 @@ def main():
     )
 
     # Designing the interface
-    #st.title("Collecte de photos de feux de forêt")
     st.title("Améliorez la detection des départs de feux")
     st.write("La photo que vous partagez ici sera utilisée pour créer un jeu de données public "
              "pour la detection de feux de forêts.")
-    st.write("Idéalement partagez nous une photo depuis une vue assez dégagée sur une zone forestière, avec et/ou sans flammes/fumées")
-    #st.write("Lorsque vous partagez une photo de départ de feux, n'hésitez pas à "
-    #        "également partager une photo du même point de vue sans fumées ou flammes.")
+    st.write("Idéalement partagez nous une photo depuis une vue assez dégagée sur une zone forestière,"
+             " avec et/ou sans flammes/fumées")
 
     # Set the columns
     cols = st.columns((2, 1))
-    cols[0].subheader("Selection de la photo")
+    cols[0].subheader("Sélection de la photo")
     cols[1].subheader("Informations de la photo")
 
     # Sidebar
@@ -61,7 +59,6 @@ def main():
         )
         img = uploaded_file.read()
         cols[0].image(img)
-
         form = cols[1].form("Information de la photo")
         form.date_input("Date de la photo", max_value=date.today())
         form.time_input("Heure approximative")
@@ -72,7 +69,6 @@ def main():
     # Find out more section
     with st.expander("En savoir plus sur notre démarche de construction d'un dataset collaboratif"):
         st.markdown(Path("/src/static/find-out-more.md").read_text())
-
 
     if submitted:
 
