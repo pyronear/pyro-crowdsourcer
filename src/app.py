@@ -9,6 +9,8 @@ from pathlib import Path
 
 import streamlit as st
 
+import config
+
 
 def main():
 
@@ -43,7 +45,7 @@ def main():
     performantes, accessibles, open-source et abordables pour la protection contre les risques naturels. """)
 
     st.sidebar.write('\n')
-    st.sidebar.markdown("""[Site Web](https://pyronear.org/) | [contact](mailto:contact@pyronear.org)""")
+    st.sidebar.markdown("""[Site Web](https://pyronear.org/)""")
 
     # Disabling warning
     st.set_option('deprecation.showfileUploaderEncoding', False)
@@ -61,7 +63,7 @@ def main():
         form = cols[1].form("Information de la photo")
         form.date_input("Date de la photo", max_value=date.today())
         form.time_input("Heure approximative")
-        form.text_input("Où a-t-elle été prise ?")
+        form.selectbox("Département", config.deps)
         form.multiselect("Étiquettes", ["fumée", "flammes"])
         submitted = form.form_submit_button("Envoyer")
 
