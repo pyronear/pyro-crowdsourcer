@@ -64,7 +64,7 @@ def main():
         form.date_input("Date de la photo", max_value=date.today())
         form.time_input("Heure approximative")
         form.selectbox("Département", config.deps)
-        form.multiselect("Étiquettes", ["fumée", "flammes"])
+        form.multiselect("Étiquettes", ["fumée", "flammes", "nuages", "éblouissement"])
         submitted = form.form_submit_button("Envoyer")
 
     # Find out more section
