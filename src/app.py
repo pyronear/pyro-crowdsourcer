@@ -69,7 +69,7 @@ def main():
 
     # Find out more section
     with st.expander("En savoir plus sur notre démarche de construction d'un dataset collaboratif"):
-        st.markdown(Path("/src/static/find-out-more.md").read_text())
+        st.markdown(Path("src/static/find-out-more.md").read_text())
 
     if submitted:
 
