@@ -22,10 +22,10 @@ def main():
     )
 
     # Designing the interface
-    st.title("Améliorez la detection des départs de feux")
+    st.title("Améliorez la détection des départs de feux")
     st.write("La photo que vous partagez ici sera utilisée pour créer un jeu de données public "
-             "pour la detection de feux de forêts.")
-    st.write("Idéalement partagez nous une photo depuis une vue assez dégagée sur une zone forestière,"
+             "pour la détection de feux de forêts.")
+    st.write("Idéalement partagez-nous une photo depuis une vue assez dégagée sur une zone forestière,"
              " avec et/ou sans flammes/fumées")
 
     # Set the columns
