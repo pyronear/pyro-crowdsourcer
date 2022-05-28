@@ -3,7 +3,7 @@ from datetime import datetime, date
 
 import dash
 
-from dash.dependencies import Input, Output, State, MATCH, ALL
+from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 # Various modules provided by Dash and Dash Leaflet to build the page layout
