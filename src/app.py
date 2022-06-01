@@ -10,6 +10,8 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from user_agents import parse
 
+from utils import build_image_upload, is_int
+
 # Fetching French departements
 departments = pd.read_csv(
     'https://static.data.gouv.fr/resources/departements-de-france/20200425-135513/departements-france.csv'
@@ -109,26 +111,25 @@ app.layout = html.Div(
         ),
 
         html.Div(
-            [
+            id='left-column-upper-div',
+            children=[
                 html.Div(
                     'Participez à la protection des forêts',
                     style={
-                        'font-size': '25px',
+                        'font-size': '3em',
                         'font-weight': 'bold',
                         'color': '#054546',
                         'margin-top': '5%',
-                        'margin-left': '5%'
                     }
                 ),
 
                 html.Div(
                     '🤝 Comment aider ?',
                     style={
-                        'font-size': '20px',
+                        'font-size': '2em',
                         'font-weight': 'bold',
                         'color': '#5BBD8C',
                         'margin-top': '2%',
-                        'margin-left': '5%'
                     }
                 ),
 
@@ -138,11 +139,10 @@ app.layout = html.Div(
                         + " qui permet d'aider à la détection de feux de forêts."
                     ),
                     style={
-                        'font-size': '16px',
+                        'font-size': '1.3em',
                         'color': '#283B3D',
                         'margin-top': '2%',
-                        'margin-left': '5%',
-                        'width': '38%'
+                        'width': '90%'
                     }
                 ),
 
@@ -150,13 +150,12 @@ app.layout = html.Div(
                     "En savoir plus sur notre système de détection",
                     id='know_more_on_detection_button',
                     style={
-                        'font-size': '12px',
+                        'font-size': '1em',
                         "text-decoration": "underline",
                         'color': '#F6B52A',
                         'margin-top': '1%',
-                        'margin-left': '5%',
                         'margin-right': '1%',
-                        'width': '38%',
+                        'width': '90%',
                         'text-align': 'right',
                         'border': 'none',
                         'background-color': 'white'
@@ -173,7 +172,6 @@ app.layout = html.Div(
                                     'font-weight': 'bold',
                                     'color': '#054546',
                                     'margin-top': '5%',
-                                    'margin-left': '5%',
                                     'width': '100%'
                                 }
                             )
@@ -193,8 +191,9 @@ app.layout = html.Div(
                 )
             ],
             style={
-                'width': '100%',
-                'background-color': 'white'
+                'width': left_column_width,
+                'background-color': 'white',
+                'margin-left': '5%'
             }
         ),
 
@@ -214,7 +213,7 @@ app.layout = html.Div(
                 html.Div(
                     '📷 Envoyer ma photo',
                     style={
-                        'font-size': '20px',
+                        'font-size': '2em',
                         'font-weight': 'bold',
                         'color': 'white',
                         'margin-top': '5%',
@@ -228,77 +227,15 @@ app.layout = html.Div(
                         html.Div(
                             'Télécharger une ou plusieurs photo(s)',
                             style={
-                                'font-size': '12px',
+                                'font-size': '1em',
                                 'font-weight': 'bold',
                                 'color': 'white'
                             }
                         ),
 
-                        dcc.Upload(
-                            id='image-upload',
-                            children=html.Div(
-                                [
-
-                                    html.Div(
-                                        'Placeholder',
-                                        style={
-                                            'font-size': '12px',
-                                            'font-weight': 'bold',
-                                            'color': '#DCE6EA',
-                                        }
-                                    ),
-
-                                    html.Div(
-                                        [
-                                            html.A(
-                                                'Glisser / déposer une photo ici ',
-                                                style={
-                                                    'color': '#283B3D',
-                                                    'font-size': '14px',
-                                                }
-                                            ),
-                                            html.A(
-                                                'ou parcourir',
-                                                style={
-                                                    'font-weight': 'bold',
-                                                    "text-decoration": "underline",
-                                                    'color': '#283B3D',
-                                                    'font-size': '14px',
-                                                }
-                                            )
-                                        ]
-                                    ),
-
-                                    html.Div(
-                                        'Maximum 200Mb - Formats acceptés : PNG, JPEG',
-                                        style={
-                                            'margin-top': '1%',
-                                            'color': '#737373',
-                                            'font-size': '10px',
-                                            'font-weight': 'bold',
-                                        }
-                                    ),
-
-                                    html.Div(
-                                        'Placeholder',
-                                        style={
-                                            'font-size': '14px',
-                                            'font-weight': 'bold',
-                                            'color': '#DCE6EA',
-                                        }
-                                    ),
-                                ]
-                            ),
-                            style={
-                                'width': '100%',
-                                'borderRadius': '10px',
-                                'textAlign': 'left',
-                                'text-indent': '5%',
-                                'background-color': '#DCE6EA',
-                                'margin-top': '2%'
-                            },
-                            # Allow multiple files to be uploaded
-                            multiple=False
+                        html.Div(
+                            id='image-upload-div',
+                            children=build_image_upload()
                         ),
 
                         html.Div(
@@ -350,7 +287,7 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     'Date',
                                                     style={
-                                                        'font-size': '14px',
+                                                        'font-size': '1.2em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
                                                         'margin-left': '5%'
@@ -382,7 +319,7 @@ app.layout = html.Div(
                                                         )
                                                     ],
                                                     style={
-                                                        'font-size': '14px',
+                                                        'font-size': '1.2em',
                                                         'width': '100%',
                                                         'margin-left': '5%'
                                                     }
@@ -395,7 +332,7 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     'Heure approximative',
                                                     style={
-                                                        'font-size': '14px',
+                                                        'font-size': '1.2em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
                                                         'margin-left': '5%',
@@ -427,7 +364,7 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     'Département',
                                                     style={
-                                                        'font-size': '14px',
+                                                        'font-size': '1.2em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
                                                         'margin-top': '3%'
@@ -459,7 +396,7 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     'Étiquette',
                                                     style={
-                                                        'font-size': '14px',
+                                                        'font-size': '1.2em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
                                                         'margin-top': '3%'
@@ -504,69 +441,71 @@ app.layout = html.Div(
                                 'background-color': '#DCE6EA',
                                 'margin-top': '3%',
                             }
-                        )
+                        ),
+
+                        html.Div(
+                            [
+                                html.Div(
+                                    "En partageant cette photo, j'accepte..."
+                                ),
+                                daq.BooleanSwitch(
+                                    id='acceptance-switch',
+                                    on=False,
+                                    style={'margin-top': '3%'}
+                                    # label="En partageant cette photo, j'accepte..."
+                                ),
+                            ],
+                            style={
+                                'margin-top': '5%',
+                                'margin-left': '5%',
+                                'color': 'white',
+                                'font-weight': 'bold',
+                                'font-size': '1.2em',
+                                'text-align': 'center'
+                            }
+                        ),
+
+                        html.Div(
+                            '',
+                            id='temp-output',
+                            style={
+                                'color': 'white',
+                                'font-weight': 'bold',
+                                'font-size': '1.2em',
+                                'text-align': 'center',
+                                'margin-left': '5%',
+                                'margin-top': '5%',
+                            }
+                        ),
+
+                        html.Div(
+                            dbc.Button(
+                                'ENVOYER',
+                                id='send-form-button',
+                                size='lg',
+                                style={
+                                    'display': 'block',
+                                    'margin-left': 'auto',
+                                    'margin-right': '0px',
+                                    'background-color': '#5BBD8C',
+                                    'font-weight': 'bold',
+                                    'font-size': '1.3em',
+                                    'borderRadius': '0px',
+                                    'border': 'none',
+                                    'width': '30%',
+                                }
+                            ),
+                            style={
+                                'margin-top': '5%',
+                                'margin-left': '5%',
+                                'font-color': 'white',
+                            }
+                        ),
                     ],
                     style={
                         'width': left_column_width,
                         'margin-top': '3%',
                         'margin-left': '5%'
-                    }
-                ),
-
-                html.Div(
-                    [
-                        daq.BooleanSwitch(
-                            id='acceptance-switch',
-                            on=False,
-                            label="En partageant cette photo, j'accepte..."
-                        ),
-                    ],
-                    style={
-                        'width': left_column_width,
-                        'margin-top': '1%',
-                        'margin-left': '5%',
-                        'color': 'white',
-                        'font-weight': 'bold',
-                        'font-size': '14px'
-                    }
-                ),
-
-                html.Div(
-                    '',
-                    id='temp-output',
-                    style={
-                        'color': 'white',
-                        'font-weight': 'bold',
-                        'font-size': '14px',
-                        'text-align': 'center',
-                        'margin-left': '5%',
-                        'margin-top': '3%',
-                        'width': left_column_width
-                    }
-                ),
-
-                html.Div(
-                    dbc.Button(
-                        'ENVOYER',
-                        id='send-form-button',
-                        size='lg',
-                        style={
-                            'display': 'block',
-                            'margin-left': 'auto',
-                            'margin-right': '0px',
-                            'background-color': '#5BBD8C',
-                            'font-weight': 'bold',
-                            'font-size': '13px',
-                            'borderRadius': '0px',
-                            'border': 'none',
-                            'width': '30%',
-                        }
-                    ),
-                    style={
-                        'width': left_column_width,
-                        'margin-top': '3%',
-                        'margin-left': '5%',
-                        'font-color': 'white',
                     }
                 ),
 
@@ -628,24 +567,32 @@ app.clientside_callback(
 
 
 @app.callback(
-    Output('left-column-main-div', 'style'),
-    Input('store-user-agent-string', 'data')
+    [
+        Output('left-column-main-div', 'style'),
+        Output('left-column-upper-div', 'style')
+    ],
+    Input('store-user-agent-string', 'data'),
+    [
+        State('left-column-main-div', 'style'),
+        State('left-column-upper-div', 'style')
+    ]
 )
-def adapt_layout(JSoutput):
+def adapt_layout(JSoutput, current_style_main_div, current_style_upper_div):
     print('THIS IS USER AGENT STRING:', JSoutput)
     user_agent = parse(JSoutput)
 
+    new_style_main_div = current_style_main_div.copy()
+    new_style_upper_div = current_style_upper_div.copy()
+
     if user_agent.is_mobile or user_agent.is_tablet:
-        left_column_width = '45%'
+        new_style_main_div['width'] = '85%'
+        new_style_upper_div['width'] = '85%'
 
     else:
-        left_column_width = '45%'
+        new_style_main_div['width'] = '45%'
+        new_style_upper_div['width'] = '45%'
 
-    return {
-        'width': left_column_width,
-        'margin-top': '3%',
-        'margin-left': '5%'
-    }
+    return new_style_main_div.copy(), new_style_upper_div.copy()
 
 
 @app.callback(
@@ -676,7 +623,8 @@ def open_close_detection_modal(n1, n2, is_open):
         Output('feedback-date-input', 'style'),
         Output('hour-input', 'invalid'),
         Output('departement-input', 'invalid'),
-        Output('etiquette-input', 'invalid')
+        Output('etiquette-input', 'invalid'),
+        Output('image-upload-div', 'children')
     ],
     [
         Input('image-upload', 'contents'),
@@ -732,7 +680,8 @@ def send_form(
                 dash.no_update,
                 False,
                 False,
-                False
+                False,
+                dash.no_update
             ]
 
     elif triggerer_id == 'send-form-button':
@@ -754,7 +703,8 @@ def send_form(
                     {'display': 'none'},
                     False,
                     False,
-                    False
+                    False,
+                    dash.no_update
                 ]
 
             else:
@@ -786,7 +736,27 @@ def send_form(
                         dash.no_update,
                         dash.no_update,
                         dash.no_update,
-                    ] + form_feedbacks
+                    ] + form_feedbacks + [dash.no_update]
+
+                elif (
+                    ':' not in hour_input
+                    or not is_int(hour_input.split(':')[0])
+                    or not is_int(hour_input.split(':')[1])
+                    or int(hour_input.split(':')[0]) > 24
+                    or int(hour_input.split(':')[1]) > 60
+                ):
+                    form_feedbacks = [{'display': 'none'}, True, False, False]
+
+                    return [
+                        "Le formulaire est incomplet.",
+                        dash.no_update,
+                        dash.no_update,
+                        dash.no_update,
+                        dash.no_update,
+                        dash.no_update,
+                        dash.no_update,
+                        dash.no_update,
+                    ] + form_feedbacks + [dash.no_update]
 
                 elif not acceptance_switch:
                     return [
@@ -802,6 +772,7 @@ def send_form(
                         False,
                         False,
                         False,
+                        dash.no_update
                     ]
 
                 else:
@@ -817,7 +788,8 @@ def send_form(
                         {'display': 'none'},
                         False,
                         False,
-                        False
+                        False,
+                        build_image_upload()
                     ]
 
     else:
@@ -825,4 +797,4 @@ def send_form(
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, dev_tools_hot_reload=True, port=8050)  # , host='0.0.0.0'
+    app.run_server(debug=True, dev_tools_hot_reload=True, host='0.0.0.0', port=8050)
