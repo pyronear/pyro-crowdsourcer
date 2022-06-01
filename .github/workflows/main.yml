@@ -7,7 +7,7 @@ on:
     branches: main
 
 jobs:
-  streamlit-run:
+  dash-run:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -31,9 +31,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # - name: Run demo
-      #   run: |
-      #     streamlit --version
-      #     screen -dm streamlit run src/app.py
-      #     sleep 10
-      #     curl http://localhost:8501/
+      - name: Run demo
+        run: |
+          screen -dm python src/app.py
+          sleep 10
+          curl http://localhost:8050/
