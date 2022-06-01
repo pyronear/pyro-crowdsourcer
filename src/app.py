@@ -40,6 +40,7 @@ app = dash.Dash(
     __name__,
     external_stylesheets=[dbc.themes.UNITED]
 )
+server = app.server
 
 # We define a few attributes of the app object
 app.title = 'Pyronear - Crowdsourcing platform'
