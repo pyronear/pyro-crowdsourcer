@@ -1,3 +1,6 @@
+import os
+import base64
+
 from datetime import date, datetime
 
 import dash
@@ -325,6 +328,14 @@ app.layout = html.Div(
                         ),
 
                         html.Div(
+                            id='image-upload-info',
+                            children='',
+                            style={
+                                'display': 'none'
+                            }
+                        ),
+
+                        html.Div(
                             id='image-container',
                             children=[
                                 html.Div(
@@ -337,7 +348,7 @@ app.layout = html.Div(
                                 ),
                                 html.Img(
                                     id='displayed-image',
-                                    src='',
+                                    src=os.path.join(os.getcwd(), 'temp.jpg'),
                                     width='90%',
                                     style={'margin-left': '5%'}
                                 ),
@@ -697,6 +708,27 @@ def open_close_detection_modal(n1, n2, is_open):
 
 
 @app.callback(
+    Output('image-upload-info', 'children'),
+    Input('image-upload', 'filename'),
+    State('image-upload', 'contents'),
+)
+def upload_action(filename, contents):
+    if filename is None:
+        raise PreventUpdate
+
+    # Save file to disk (on server)
+    content_type, content_string = contents.split(',')
+
+    path_to_image = os.path.dirname(os.path.abspath(__file__))
+    path_to_image = os.path.join(path_to_image, 'temp.png')
+
+    with open(path_to_image, 'wb') as f:
+        f.write(base64.b64decode(content_string))
+
+    return f'Latest upload was {filename}'
+
+
+@app.callback(
     [
         Output('temp-output', 'children'),
         Output('date-input', 'date'),
@@ -713,11 +745,11 @@ def open_close_detection_modal(n1, n2, is_open):
         Output('image-upload-div', 'children')
     ],
     [
-        Input('image-upload', 'contents'),
+        Input('image-upload-info', 'children'),
         Input('send-form-button', 'n_clicks')
     ],
     [
-        State('image-upload', 'contents'),
+        State('image-upload-info', 'children'),
         State('date-input', 'date'),
         State('hour-input', 'value'),
         State('departement-input', 'value'),
@@ -727,9 +759,9 @@ def open_close_detection_modal(n1, n2, is_open):
     ]
 )
 def send_form(
-    image_upload_contents_input,
+    info,
     n_clicks,
-    image_upload_contents,
+    info_state,
     date_input,
     hour_input,
     departement_input,
@@ -740,9 +772,9 @@ def send_form(
     ctx = dash.callback_context
     triggerer_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-    if triggerer_id == 'image-upload':
+    if triggerer_id == 'image-upload-info':
 
-        if image_upload_contents_input is None:
+        if not info.startswith('Latest'):
             raise PreventUpdate
 
         else:
@@ -754,6 +786,12 @@ def send_form(
                 'margin-top': '3%'
             }
 
+            path_to_image = os.path.dirname(os.path.abspath(__file__))
+            path_to_image = os.path.join(path_to_image, 'temp.png')
+
+            encoded_image = base64.b64encode(open(path_to_image, 'rb').read())
+            src = 'data:image/png;base64,{}'.format(encoded_image.decode())
+
             return [
                 dash.no_update,
                 dash.no_update,
@@ -761,7 +799,7 @@ def send_form(
                 dash.no_update,
                 dash.no_update,
                 dash.no_update,
-                image_upload_contents_input,
+                src,
                 style,
                 dash.no_update,
                 False,
@@ -776,7 +814,7 @@ def send_form(
             raise PreventUpdate
 
         else:
-            if image_upload_contents is None:
+            if not info_state.startswith('Latest'):
                 return [
                     "Avez-vous bien ajouté une image ?",
                     dash.no_update,
@@ -862,6 +900,13 @@ def send_form(
                     ]
 
                 else:
+                    # INSERT BACK-END INSTRUCTIONS
+
+                    path_to_image = os.path.dirname(os.path.abspath(__file__))
+                    path_to_image = os.path.join(path_to_image, 'temp.png')
+
+                    os.remove(path_to_image)
+
                     return [
                         "Merci pour votre contribution !",
                         None,
