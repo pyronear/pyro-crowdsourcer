@@ -702,7 +702,7 @@ def upload_action(filename, contents):
         raise PreventUpdate
 
     # Save file to disk (on server)
-    content_type, content_string = contents.split(',')
+    _, content_string = contents.split(',')
 
     path_to_image = os.path.dirname(os.path.abspath(__file__))
     path_to_image = os.path.join(path_to_image, 'temp.png')
