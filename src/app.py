@@ -1,11 +1,12 @@
 import base64
+import csv
 import os
 from datetime import date, datetime
 
 import dash
 import dash_bootstrap_components as dbc
 import dash_daq as daq
-import pandas as pd
+import requests
 # Various modules provided by Dash and Dash Leaflet to build the page layout
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
@@ -16,19 +17,15 @@ from user_agents import parse
 # Utils ----------------------------------------------------------------------------------------------------------------
 
 # Fetching French departements
-departments = pd.read_csv(
-    'https://static.data.gouv.fr/resources/departements-de-france/20200425-135513/departements-france.csv'
-)
+CSV_URL = 'https://static.data.gouv.fr/resources/departements-de-france/20200425-135513/departements-france.csv'
 
-department_options = []
-departments['to_be_displayed'] = departments['code_departement'] + ' - ' + departments['nom_departement']
-for _, row in departments.iterrows():
-    department_options.append(
-        {
-            'label': row['to_be_displayed'],
-            'value': row['code_departement']
-        }
-    )
+with requests.Session() as s:
+    download = s.get(CSV_URL)
+
+    decoded_content = download.content.decode('utf-8')
+
+    cr = csv.reader(decoded_content.splitlines(), delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+    department_options = [{"label": f"{code} - {name}", "value": name} for code, name, _, _ in cr][1:]
 
 # Setting the options for the type of wildfire
 etiquette_options = [
@@ -170,17 +167,6 @@ app.layout = html.Div(
         # Navbar
         dbc.Navbar(
             [
-                # html.A(
-                #     dbc.Row(
-                #         [
-                #             dbc.Col(html.Div('Hello')),
-                #         ],
-                #         align="center",
-                #         no_gutters=True,
-                #     ),
-                #     href="#",
-                # ),
-                dbc.NavbarToggler(id="navbar-toggler"),
                 dbc.Collapse([user_item], id="navbar-collapse", navbar=True),
                 html.Div(link_to_website_button)
             ],
