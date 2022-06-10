@@ -157,8 +157,8 @@ link_to_website_button = dbc.NavLink(
     }
 )
 
-left_column_width = '45%'
-form_inputs_width = '80%'
+left_column_width = '85%'
+form_inputs_width = '85%'
 
 app.layout = html.Div(
     [
@@ -598,7 +598,7 @@ app.layout = html.Div(
                         'align-text': 'center',
                         'font-weight': 'bold',
                         'color': 'white',
-                        'margin-top': '40%',
+                        'margin-top': '15%',
                         'margin-left': '36%',
                     }
                 ),
@@ -609,7 +609,7 @@ app.layout = html.Div(
                         'font-size': '20px',
                         'font-weight': 'bold',
                         'color': '#054546',
-                        'margin-top': '5%',
+                        'margin-top': '3%',
                         'margin-left': '5%'
                     }
                 ),
@@ -671,8 +671,8 @@ def adapt_layout(JSoutput, current_style_main_div, current_style_upper_div):
         new_style_upper_div['width'] = '85%'
 
     else:
-        new_style_main_div['width'] = '45%'
-        new_style_upper_div['width'] = '45%'
+        new_style_main_div['width'] = '85%'
+        new_style_upper_div['width'] = '85%'
 
     return new_style_main_div.copy(), new_style_upper_div.copy()
 
