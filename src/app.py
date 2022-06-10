@@ -144,11 +144,12 @@ link_to_website_button = dbc.NavLink(
                 html.I(
                     className="mx-auto order-0",
                 ),
-                html.Span("à propos de Pyronear"),
+                html.Span("visitez notre site web"),
             ]
         )
     ],
     href="https://pyronear.org",
+    target='_blank',
     style={
         "font-size": "17px",
         "font-weight": "bold",
@@ -285,7 +286,7 @@ app.layout = html.Div(
                 ),
 
                 html.Div(
-                    '📷 Envoyer ma photo',
+                    '📷 Sélectionner ou prendre une photo',
                     style={
                         'font-size': '2em',
                         'font-weight': 'bold',
@@ -299,7 +300,8 @@ app.layout = html.Div(
                     id='left-column-main-div',
                     children=[
                         html.Div(
-                            'Télécharger une ou plusieurs photo(s)',
+                            id='upload-image-message',
+                            children='Ajouter une photo',
                             style={
                                 'font-size': '1em',
                                 'font-weight': 'bold',
@@ -309,7 +311,14 @@ app.layout = html.Div(
 
                         html.Div(
                             id='image-upload-div',
-                            children=build_image_upload()
+                            children=[
+                                build_image_upload(),
+                                dcc.Loading(
+                                    id="loading-1",
+                                    type="default",
+                                    children=html.Div(id="loading-output-1")
+                                )
+                            ]
                         ),
 
                         html.Div(
@@ -381,7 +390,8 @@ app.layout = html.Div(
                                                             id='date-input',
                                                             min_date_allowed=date(2000, 1, 1),
                                                             max_date_allowed=datetime.today(),
-                                                            initial_visible_month=date(2022, 5, 7),
+                                                            initial_visible_month=datetime.today(),
+                                                            # date=datetime.today(),
                                                             display_format='DD/MM/YYYY',
                                                             placeholder='DD/MM/YYYY',
                                                             style={
@@ -528,7 +538,8 @@ app.layout = html.Div(
                         html.Div(
                             [
                                 html.Div(
-                                    "En partageant cette photo, j'accepte..."
+                                    "En partageant cette photo, j'accepte qu'elle soit intégrée à un jeu de données"
+                                    + " public et de céder ses droits"
                                 ),
                                 daq.BooleanSwitch(
                                     id='acceptance-switch',
@@ -716,6 +727,7 @@ def upload_action(filename, contents):
 @app.callback(
     [
         Output('temp-output', 'children'),
+        Output('temp-output', 'style'),
         Output('date-input', 'date'),
         Output('hour-input', 'value'),
         Output('departement-input', 'value'),
@@ -727,7 +739,8 @@ def upload_action(filename, contents):
         Output('hour-input', 'invalid'),
         Output('departement-input', 'invalid'),
         Output('etiquette-input', 'invalid'),
-        Output('image-upload-div', 'children')
+        Output('image-upload-div', 'children'),
+        Output('upload-image-message', 'children')
     ],
     [
         Input('image-upload-info', 'children'),
@@ -784,13 +797,15 @@ def send_form(
                 dash.no_update,
                 dash.no_update,
                 dash.no_update,
+                dash.no_update,
                 src,
                 style,
                 dash.no_update,
                 False,
                 False,
                 False,
-                dash.no_update
+                dash.no_update,
+                'Modifier ma photo'
             ]
 
     elif triggerer_id == 'send-form-button':
@@ -800,8 +815,18 @@ def send_form(
 
         else:
             if not info_state.startswith('Latest'):
+                style={
+                    'color': '#F6B52A',
+                    'font-weight': 'bold',
+                    'font-size': '1.2em',
+                    'text-align': 'center',
+                    'margin-left': '5%',
+                    'margin-top': '5%',
+                }
+
                 return [
                     "Avez-vous bien ajouté une image ?",
+                    style,
                     dash.no_update,
                     dash.no_update,
                     dash.no_update,
@@ -813,6 +838,7 @@ def send_form(
                     False,
                     False,
                     False,
+                    dash.no_update,
                     dash.no_update
                 ]
 
@@ -823,6 +849,15 @@ def send_form(
                     or departement_input is None
                     or etiquette_input is None
                 ):
+
+                    style={
+                        'color': '#F6B52A',
+                        'font-weight': 'bold',
+                        'font-size': '1.2em',
+                        'text-align': 'center',
+                        'margin-left': '5%',
+                        'margin-top': '5%',
+                    }
 
                     if date_input is None:
                         form_feedbacks = [{'color': '#DF382F'}, False, False, False]
@@ -838,6 +873,7 @@ def send_form(
 
                     return [
                         "Le formulaire est incomplet.",
+                        style,
                         dash.no_update,
                         dash.no_update,
                         dash.no_update,
@@ -845,7 +881,7 @@ def send_form(
                         dash.no_update,
                         dash.no_update,
                         dash.no_update,
-                    ] + form_feedbacks + [dash.no_update]
+                    ] + form_feedbacks + [dash.no_update, dash.no_update]
 
                 elif (
                     ':' not in hour_input
@@ -854,10 +890,20 @@ def send_form(
                     or int(hour_input.split(':')[0]) > 24
                     or int(hour_input.split(':')[1]) > 60
                 ):
+                    style={
+                        'color': '#F6B52A',
+                        'font-weight': 'bold',
+                        'font-size': '1.2em',
+                        'text-align': 'center',
+                        'margin-left': '5%',
+                        'margin-top': '5%',
+                    }
+
                     form_feedbacks = [{'display': 'none'}, True, False, False]
 
                     return [
                         "Le formulaire est incomplet.",
+                        style,
                         dash.no_update,
                         dash.no_update,
                         dash.no_update,
@@ -865,11 +911,21 @@ def send_form(
                         dash.no_update,
                         dash.no_update,
                         dash.no_update,
-                    ] + form_feedbacks + [dash.no_update]
+                    ] + form_feedbacks + [dash.no_update, dash.no_update]
 
                 elif not acceptance_switch:
+                    style={
+                        'color': '#F6B52A',
+                        'font-weight': 'bold',
+                        'font-size': '1.2em',
+                        'text-align': 'center',
+                        'margin-left': '5%',
+                        'margin-top': '5%',
+                    }
+
                     return [
                         "Pour valider l'envoi, veuillez accepter les conditions.",
+                        style,
                         dash.no_update,
                         dash.no_update,
                         dash.no_update,
@@ -881,10 +937,20 @@ def send_form(
                         False,
                         False,
                         False,
+                        dash.no_update,
                         dash.no_update
                     ]
 
                 else:
+                    style={
+                        'color': 'white',
+                        'font-weight': 'bold',
+                        'font-size': '1.2em',
+                        'text-align': 'center',
+                        'margin-left': '5%',
+                        'margin-top': '5%',
+                    }
+
                     # INSERT BACK-END INSTRUCTIONS
 
                     path_to_image = os.path.dirname(os.path.abspath(__file__))
@@ -893,7 +959,8 @@ def send_form(
                     os.remove(path_to_image)
 
                     return [
-                        "Merci pour votre contribution !",
+                        "Merci pour votre contribution, votre photo a été envoyée avec succès !",
+                        style,
                         None,
                         None,
                         None,
@@ -905,7 +972,8 @@ def send_form(
                         False,
                         False,
                         False,
-                        build_image_upload()
+                        build_image_upload(),
+                        'Ajouter une photo'
                     ]
 
     else:
