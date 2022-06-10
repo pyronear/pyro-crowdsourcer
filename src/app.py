@@ -815,7 +815,8 @@ def send_form(
 
         else:
             if not info_state.startswith('Latest'):
-                style={
+
+                style = {
                     'color': '#F6B52A',
                     'font-weight': 'bold',
                     'font-size': '1.2em',
@@ -850,7 +851,7 @@ def send_form(
                     or etiquette_input is None
                 ):
 
-                    style={
+                    style = {
                         'color': '#F6B52A',
                         'font-weight': 'bold',
                         'font-size': '1.2em',
@@ -890,7 +891,7 @@ def send_form(
                     or int(hour_input.split(':')[0]) > 24
                     or int(hour_input.split(':')[1]) > 60
                 ):
-                    style={
+                    style = {
                         'color': '#F6B52A',
                         'font-weight': 'bold',
                         'font-size': '1.2em',
@@ -914,7 +915,7 @@ def send_form(
                     ] + form_feedbacks + [dash.no_update, dash.no_update]
 
                 elif not acceptance_switch:
-                    style={
+                    style = {
                         'color': '#F6B52A',
                         'font-weight': 'bold',
                         'font-size': '1.2em',
@@ -942,7 +943,7 @@ def send_form(
                     ]
 
                 else:
-                    style={
+                    style = {
                         'color': 'white',
                         'font-weight': 'bold',
                         'font-size': '1.2em',
