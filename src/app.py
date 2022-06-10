@@ -313,11 +313,6 @@ app.layout = html.Div(
                             id='image-upload-div',
                             children=[
                                 build_image_upload(),
-                                dcc.Loading(
-                                    id="loading-1",
-                                    type="default",
-                                    children=html.Div(id="loading-output-1")
-                                )
                             ]
                         ),
 
