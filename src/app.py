@@ -6,6 +6,7 @@ from datetime import date, datetime
 import dash
 import dash_bootstrap_components as dbc
 import dash_daq as daq
+import dash_uploader as du
 import requests
 # Various modules provided by Dash and Dash Leaflet to build the page layout
 from dash import dcc, html
@@ -45,72 +46,92 @@ def is_int(element):
 
 def build_image_upload():
 
-    upload = dcc.Upload(
+    upload = du.Upload(
         id='image-upload',
-        children=html.Div(
-            [
-
-                html.Div(
-                    'Placeholder',
-                    style={
-                        'font-size': '12px',
-                        'font-weight': 'bold',
-                        'color': '#DCE6EA',
-                    }
-                ),
-
-                html.Div(
-                    [
-                        html.A(
-                            'Glisser / déposer une photo ici ',
-                            style={
-                                'color': '#283B3D',
-                                'font-size': '14px',
-                            }
-                        ),
-                        html.A(
-                            'ou parcourir',
-                            style={
-                                'font-weight': 'bold',
-                                "text-decoration": "underline",
-                                'color': '#283B3D',
-                                'font-size': '14px',
-                            }
-                        )
-                    ]
-                ),
-
-                html.Div(
-                    'Maximum 200Mb - Formats acceptés : PNG, JPEG',
-                    style={
-                        'margin-top': '1%',
-                        'color': '#737373',
-                        'font-size': '10px',
-                        'font-weight': 'bold',
-                    }
-                ),
-
-                html.Div(
-                    'Placeholder',
-                    style={
-                        'font-size': '14px',
-                        'font-weight': 'bold',
-                        'color': '#DCE6EA',
-                    }
-                ),
-            ]
-        ),
-        style={
-            'width': '100%',
-            'borderRadius': '10px',
-            'textAlign': 'left',
-            'text-indent': '5%',
+        text='Glisser / déposer une photo ici - ou parcourir',
+        text_completed='Vous avez choisi : ',
+        text_disabled="Le téléversement n'est plus disponible.",
+        cancel_button=True,
+        pause_button=False,
+        disabled=False,
+        filetypes=['png', 'jpeg', 'jpg'],
+        max_file_size=1024,
+        chunk_size=1,
+        default_style={
             'background-color': '#DCE6EA',
-            'margin-top': '2%'
+            'border-style': 'solid',
+            'margin-top': '1%'
         },
-        # Allow multiple files to be uploaded
-        multiple=False
+        upload_id=None,
+        max_files=1,
     )
+
+    # upload = dcc.Upload(
+    #     id='image-upload',
+    #     children=html.Div(
+    #         [
+
+    #             html.Div(
+    #                 'Placeholder',
+    #                 style={
+    #                     'font-size': '12px',
+    #                     'font-weight': 'bold',
+    #                     'color': '#DCE6EA',
+    #                 }
+    #             ),
+
+    #             html.Div(
+    #                 [
+    #                     html.A(
+    #                         'Glisser / déposer une photo ici ',
+    #                         style={
+    #                             'color': '#283B3D',
+    #                             'font-size': '14px',
+    #                         }
+    #                     ),
+    #                     html.A(
+    #                         'ou parcourir',
+    #                         style={
+    #                             'font-weight': 'bold',
+    #                             "text-decoration": "underline",
+    #                             'color': '#283B3D',
+    #                             'font-size': '14px',
+    #                         }
+    #                     )
+    #                 ]
+    #             ),
+
+    #             html.Div(
+    #                 'Maximum 200Mb - Formats acceptés : PNG, JPEG',
+    #                 style={
+    #                     'margin-top': '1%',
+    #                     'color': '#737373',
+    #                     'font-size': '10px',
+    #                     'font-weight': 'bold',
+    #                 }
+    #             ),
+
+    #             html.Div(
+    #                 'Placeholder',
+    #                 style={
+    #                     'font-size': '14px',
+    #                     'font-weight': 'bold',
+    #                     'color': '#DCE6EA',
+    #                 }
+    #             ),
+    #         ]
+    #     ),
+    #     style={
+    #         'width': '100%',
+    #         'borderRadius': '10px',
+    #         'textAlign': 'left',
+    #         'text-indent': '5%',
+    #         'background-color': '#DCE6EA',
+    #         'margin-top': '2%'
+    #     },
+    #     # Allow multiple files to be uploaded
+    #     multiple=False
+    # )
 
     return upload
 
@@ -123,6 +144,10 @@ app = dash.Dash(
     external_stylesheets=[dbc.themes.UNITED]
 )
 server = app.server
+
+# Configuring the uploads
+UPLOAD_FOLDER_ROOT = 'src'
+du.configure_upload(app, UPLOAD_FOLDER_ROOT)
 
 # We define a few attributes of the app object
 app.title = 'Pyronear - Crowdsourcing platform'
@@ -698,25 +723,38 @@ def open_close_detection_modal(n1, n2, is_open):
     return is_open
 
 
-@app.callback(
-    Output('image-upload-info', 'children'),
-    Input('image-upload', 'filename'),
-    State('image-upload', 'contents'),
+# @app.callback(
+#     Output('image-upload-info', 'children'),
+#     Input('image-upload', 'filename'),
+#     State('image-upload', 'contents'),
+# )
+# def upload_action(filename, contents):
+#     if filename is None:
+#         raise PreventUpdate
+
+#     # Save file to disk (on server)
+#     _, content_string = contents.split(',')
+
+#     path_to_image = os.path.dirname(os.path.abspath(__file__))
+#     path_to_image = os.path.join(path_to_image, 'temp.png')
+
+#     with open(path_to_image, 'wb') as f:
+#         f.write(base64.b64decode(content_string))
+
+#     return f'Latest upload was {filename}'
+
+
+@du.callback(
+    output=Output('image-upload-info', 'children'),
+    id='image-upload',
 )
-def upload_action(filename, contents):
-    if filename is None:
+def upload_action(filenames):
+    if filenames is None or len(filenames) == 0:
         raise PreventUpdate
 
-    # Save file to disk (on server)
-    _, content_string = contents.split(',')
+    path_to_latest_file = filenames[-1]
 
-    path_to_image = os.path.dirname(os.path.abspath(__file__))
-    path_to_image = os.path.join(path_to_image, 'temp.png')
-
-    with open(path_to_image, 'wb') as f:
-        f.write(base64.b64decode(content_string))
-
-    return f'Latest upload was {filename}'
+    return f'Latest upload: {str(path_to_latest_file)}'
 
 
 @app.callback(
@@ -779,11 +817,28 @@ def send_form(
                 'margin-top': '3%'
             }
 
-            path_to_image = os.path.dirname(os.path.abspath(__file__))
-            path_to_image = os.path.join(path_to_image, 'temp.png')
+            # path_to_image = os.path.dirname(os.path.abspath(__file__))
+            # path_to_image = os.path.join(path_to_image, 'temp.png')
+
+            # src = f'data:image/png;base64,{encoded_image.decode()}'
+
+            info_split = info.split('/')
+
+            upload_id = info_split[-2]
+            file_name = info_split[-1]
+
+            path_to_image = os.path.join(
+                os.path.dirname(
+                    os.path.abspath(__file__),
+                ),
+                upload_id,
+                file_name
+            )
+
+            image_type = path_to_image[path_to_image.rfind('.') + 1:]
 
             encoded_image = base64.b64encode(open(path_to_image, 'rb').read())
-            src = 'data:image/png;base64,{}'.format(encoded_image.decode())
+            src = f'data:image/{image_type};base64,{encoded_image.decode()}'
 
             return [
                 dash.no_update,
@@ -949,10 +1004,24 @@ def send_form(
 
                     # INSERT BACK-END INSTRUCTIONS
 
-                    path_to_image = os.path.dirname(os.path.abspath(__file__))
-                    path_to_image = os.path.join(path_to_image, 'temp.png')
+                    # path_to_image = os.path.dirname(os.path.abspath(__file__))
+                    # path_to_image = os.path.join(path_to_image, 'temp.png')
+
+                    info_split = info.split('/')
+
+                    upload_id = info_split[-2]
+                    file_name = info_split[-1]
+
+                    path_to_image = os.path.join(
+                        os.path.dirname(
+                            os.path.abspath(__file__),
+                        ),
+                        upload_id,
+                        file_name
+                    )
 
                     os.remove(path_to_image)
+                    os.rmdir(os.path.dirname(path_to_image))
 
                     return [
                         "Merci pour votre contribution, votre photo a été envoyée avec succès !",
