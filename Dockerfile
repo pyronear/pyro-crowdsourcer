@@ -16,4 +16,4 @@ RUN apt-get update \
 
 COPY ./src src/
 
-CMD ["streamlit", "run", "src/app.py"]
+CMD ["gunicorn", "-b 0.0.0.0:80", "src.app:server"]

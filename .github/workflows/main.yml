@@ -7,7 +7,7 @@ on:
     branches: main
 
 jobs:
-  streamlit-run:
+  dash-run:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -33,7 +33,6 @@ jobs:
 
       - name: Run demo
         run: |
-          streamlit --version
-          screen -dm streamlit run src/app.py
+          screen -dm python src/app.py
           sleep 10
-          curl http://localhost:8501/
+          curl http://localhost:8050/
