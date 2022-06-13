@@ -11,7 +11,8 @@ from datetime import date, datetime
 import dash
 import dash_bootstrap_components as dbc
 import dash_daq as daq
-import dash_uploader as du
+import dash_mantine_components as dmc
+# import dash_uploader as du
 import requests
 # Various modules provided by Dash and Dash Leaflet to build the page layout
 from dash import dcc, html
@@ -35,8 +36,11 @@ with requests.Session() as s:
 
 # Setting the options for the type of wildfire
 etiquette_options = [
-    {'label': 'Feu de forêt', 'value': 'wildfire'},
-    {'label': 'Feu industriel', 'value': 'industrial_fire'}
+    {'label': 'Fumée', 'value': 'smoke'},
+    {'label': 'Flammes', 'value': 'fire'},
+    {'label': 'Nuage(s)', 'value': 'clouds'},
+    {'label': 'Éblouissement', 'value': 'glare'},
+    {'label': 'Rien de notable', 'value': 'none'}
 ]
 
 
@@ -51,92 +55,92 @@ def is_int(element):
 
 def build_image_upload():
 
-    upload = du.Upload(
-        id='image-upload',
-        text='Glisser / déposer une photo ici - ou parcourir',
-        text_completed='Vous avez choisi : ',
-        text_disabled="Le téléversement n'est plus disponible.",
-        cancel_button=True,
-        pause_button=False,
-        disabled=False,
-        filetypes=['png', 'jpeg', 'jpg'],
-        max_file_size=1024,
-        chunk_size=1,
-        default_style={
-            'background-color': '#DCE6EA',
-            'border-style': 'solid',
-            'margin-top': '1%'
-        },
-        upload_id=None,
-        max_files=1,
-    )
-
-    # upload = dcc.Upload(
+    # upload = du.Upload(
     #     id='image-upload',
-    #     children=html.Div(
-    #         [
-
-    #             html.Div(
-    #                 'Placeholder',
-    #                 style={
-    #                     'font-size': '12px',
-    #                     'font-weight': 'bold',
-    #                     'color': '#DCE6EA',
-    #                 }
-    #             ),
-
-    #             html.Div(
-    #                 [
-    #                     html.A(
-    #                         'Glisser / déposer une photo ici ',
-    #                         style={
-    #                             'color': '#283B3D',
-    #                             'font-size': '14px',
-    #                         }
-    #                     ),
-    #                     html.A(
-    #                         'ou parcourir',
-    #                         style={
-    #                             'font-weight': 'bold',
-    #                             "text-decoration": "underline",
-    #                             'color': '#283B3D',
-    #                             'font-size': '14px',
-    #                         }
-    #                     )
-    #                 ]
-    #             ),
-
-    #             html.Div(
-    #                 'Maximum 200Mb - Formats acceptés : PNG, JPEG',
-    #                 style={
-    #                     'margin-top': '1%',
-    #                     'color': '#737373',
-    #                     'font-size': '10px',
-    #                     'font-weight': 'bold',
-    #                 }
-    #             ),
-
-    #             html.Div(
-    #                 'Placeholder',
-    #                 style={
-    #                     'font-size': '14px',
-    #                     'font-weight': 'bold',
-    #                     'color': '#DCE6EA',
-    #                 }
-    #             ),
-    #         ]
-    #     ),
-    #     style={
-    #         'width': '100%',
-    #         'borderRadius': '10px',
-    #         'textAlign': 'left',
-    #         'text-indent': '5%',
+    #     text='Glisser / déposer une photo ici - ou parcourir',
+    #     text_completed='Vous avez choisi : ',
+    #     text_disabled="Le téléversement n'est plus disponible.",
+    #     cancel_button=True,
+    #     pause_button=False,
+    #     disabled=False,
+    #     filetypes=['png', 'jpeg', 'jpg'],
+    #     max_file_size=1024,
+    #     chunk_size=1,
+    #     default_style={
     #         'background-color': '#DCE6EA',
-    #         'margin-top': '2%'
+    #         'border-style': 'solid',
+    #         'margin-top': '1%'
     #     },
-    #     # Allow multiple files to be uploaded
-    #     multiple=False
+    #     upload_id=None,
+    #     max_files=1,
     # )
+
+    upload = dcc.Upload(
+        id='image-upload',
+        children=html.Div(
+            [
+
+                html.Div(
+                    'Placeholder',
+                    style={
+                        'font-size': '12px',
+                        'font-weight': 'bold',
+                        'color': '#DCE6EA',
+                    }
+                ),
+
+                html.Div(
+                    [
+                        html.A(
+                            'Glisser / déposer une photo ici ',
+                            style={
+                                'color': '#283B3D',
+                                'font-size': '14px',
+                            }
+                        ),
+                        html.A(
+                            'ou parcourir',
+                            style={
+                                'font-weight': 'bold',
+                                "text-decoration": "underline",
+                                'color': '#283B3D',
+                                'font-size': '14px',
+                            }
+                        )
+                    ]
+                ),
+
+                html.Div(
+                    'Maximum 200Mb - Formats acceptés : PNG, JPEG',
+                    style={
+                        'margin-top': '1%',
+                        'color': '#737373',
+                        'font-size': '10px',
+                        'font-weight': 'bold',
+                    }
+                ),
+
+                html.Div(
+                    'Placeholder',
+                    style={
+                        'font-size': '14px',
+                        'font-weight': 'bold',
+                        'color': '#DCE6EA',
+                    }
+                ),
+            ]
+        ),
+        style={
+            'width': '100%',
+            'borderRadius': '10px',
+            'textAlign': 'left',
+            'text-indent': '5%',
+            'background-color': '#DCE6EA',
+            'margin-top': '2%'
+        },
+        # Allow multiple files to be uploaded
+        multiple=False
+    )
 
     return upload
 
@@ -151,8 +155,8 @@ app = dash.Dash(
 server = app.server
 
 # Configuring the uploads
-UPLOAD_FOLDER_ROOT = 'src'
-du.configure_upload(app, UPLOAD_FOLDER_ROOT)
+# UPLOAD_FOLDER_ROOT = 'src'
+# du.configure_upload(app, UPLOAD_FOLDER_ROOT)
 
 # We define a few attributes of the app object
 app.title = 'Pyronear - Crowdsourcing platform'
@@ -424,7 +428,7 @@ app.layout = html.Div(
                                                                 'font-size': '12px',
                                                                 'borderRadius': '0px',
                                                                 'border': 'none',
-                                                                'border-bottom': '1px solid black'
+                                                                'border-bottom': '1px solid black',
                                                             }
                                                         ),
                                                         html.Div(
@@ -436,7 +440,6 @@ app.layout = html.Div(
                                                         )
                                                     ],
                                                     style={
-                                                        'font-size': '1.2em',
                                                         'width': '100%',
                                                         'margin-left': '5%'
                                                     }
@@ -452,28 +455,47 @@ app.layout = html.Div(
                                                         'font-size': '1.2em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
-                                                        'margin-left': '5%',
                                                         'margin-top': '3%'
                                                     }
                                                 ),
-                                                dbc.Input(
+                                                dmc.TimeInput(
                                                     id='hour-input',
-                                                    placeholder='HH:MM',
                                                     style={
-                                                        'width': form_inputs_width,
-                                                        'margin-left': '5%',
                                                         'font-color': '#737373',
                                                         'borderRadius': '0px',
                                                         'border': 'none',
                                                         'border-bottom': '1px solid black'
                                                     }
                                                 ),
-                                                dbc.FormFeedback(
+                                                html.Div(
                                                     "Oops, il semblerait qu'il y ait une erreur",
-                                                    type='invalid',
-                                                    style={'margin-left': '5%'}
+                                                    id='feedback-hour-input',
+                                                    style={
+                                                        'display': 'none'
+                                                    }
                                                 )
-                                            ]
+                                                # dbc.Input(
+                                                #     id='hour-input',
+                                                #     placeholder='HH:MM',
+                                                #     style={
+                                                #         'width': form_inputs_width,
+                                                #         'margin-left': '5%',
+                                                #         'font-color': '#737373',
+                                                #         'borderRadius': '0px',
+                                                #         'border': 'none',
+                                                #         'border-bottom': '1px solid black'
+                                                #     }
+                                                # ),
+                                                # dbc.FormFeedback(
+                                                #     "Oops, il semblerait qu'il y ait une erreur",
+                                                #     type='invalid',
+                                                #     style={'margin-left': '5%'}
+                                                # )
+                                            ],
+                                            style={
+                                                'width': form_inputs_width,
+                                                'margin-left': '5%'
+                                            }
                                         ),
 
                                         html.Div(
@@ -511,7 +533,7 @@ app.layout = html.Div(
                                         html.Div(
                                             [
                                                 dbc.Label(
-                                                    'Étiquette',
+                                                    '[Facultatif] Un élément notable à signaler ?',
                                                     style={
                                                         'font-size': '1.2em',
                                                         'font-weight': 'bold',
@@ -728,38 +750,39 @@ def open_close_detection_modal(n1, n2, is_open):
     return is_open
 
 
-# @app.callback(
-#     Output('image-upload-info', 'children'),
-#     Input('image-upload', 'filename'),
-#     State('image-upload', 'contents'),
+@app.callback(
+    Output('image-upload-info', 'children'),
+    Input('image-upload', 'filename'),
+    State('image-upload', 'contents'),
+)
+def upload_action(filename, contents):
+    if filename is None:
+        return ''
+
+    else:
+        # Save file to disk (on server)
+        _, content_string = contents.split(',')
+
+        path_to_image = os.path.dirname(os.path.abspath(__file__))
+        path_to_image = os.path.join(path_to_image, 'temp.png')
+
+        with open(path_to_image, 'wb') as f:
+            f.write(base64.b64decode(content_string))
+
+        return f'Latest upload was {filename}'
+
+
+# @du.callback(
+#     output=Output('image-upload-info', 'children'),
+#     id='image-upload',
 # )
-# def upload_action(filename, contents):
-#     if filename is None:
+# def upload_action(filenames):
+#     if filenames is None or len(filenames) == 0:
 #         raise PreventUpdate
 
-#     # Save file to disk (on server)
-#     _, content_string = contents.split(',')
+#     path_to_latest_file = filenames[-1]
 
-#     path_to_image = os.path.dirname(os.path.abspath(__file__))
-#     path_to_image = os.path.join(path_to_image, 'temp.png')
-
-#     with open(path_to_image, 'wb') as f:
-#         f.write(base64.b64decode(content_string))
-
-#     return f'Latest upload was {filename}'
-
-
-@du.callback(
-    output=Output('image-upload-info', 'children'),
-    id='image-upload',
-)
-def upload_action(filenames):
-    if filenames is None or len(filenames) == 0:
-        raise PreventUpdate
-
-    path_to_latest_file = filenames[-1]
-
-    return f'Latest upload: {str(path_to_latest_file)}'
+#     return f'Latest upload: {str(path_to_latest_file)}'
 
 
 @app.callback(
@@ -774,11 +797,10 @@ def upload_action(filenames):
         Output('displayed-image', 'src'),
         Output('image-container', 'style'),
         Output('feedback-date-input', 'style'),
-        Output('hour-input', 'invalid'),
+        Output('feedback-hour-input', 'style'),
         Output('departement-input', 'invalid'),
-        Output('etiquette-input', 'invalid'),
         Output('image-upload-div', 'children'),
-        Output('upload-image-message', 'children')
+        Output('upload-image-message', 'children'),
     ],
     [
         Input('image-upload-info', 'children'),
@@ -822,28 +844,29 @@ def send_form(
                 'margin-top': '3%'
             }
 
-            # path_to_image = os.path.dirname(os.path.abspath(__file__))
-            # path_to_image = os.path.join(path_to_image, 'temp.png')
-
-            # src = f'data:image/png;base64,{encoded_image.decode()}'
-
-            info_split = info.split('/')
-
-            upload_id = info_split[-2]
-            file_name = info_split[-1]
-
-            path_to_image = os.path.join(
-                os.path.dirname(
-                    os.path.abspath(__file__),
-                ),
-                upload_id,
-                file_name
-            )
-
-            image_type = path_to_image[path_to_image.rfind('.') + 1:]
+            path_to_image = os.path.dirname(os.path.abspath(__file__))
+            path_to_image = os.path.join(path_to_image, 'temp.png')
 
             encoded_image = base64.b64encode(open(path_to_image, 'rb').read())
-            src = f'data:image/{image_type};base64,{encoded_image.decode()}'
+            src = f'data:image/png;base64,{encoded_image.decode()}'
+
+            # info_split = info.split('/')
+
+            # upload_id = info_split[-2]
+            # file_name = info_split[-1]
+
+            # path_to_image = os.path.join(
+            #     os.path.dirname(
+            #         os.path.abspath(__file__),
+            #     ),
+            #     upload_id,
+            #     file_name
+            # )
+
+            # image_type = path_to_image[path_to_image.rfind('.') + 1:]
+
+            # encoded_image = base64.b64encode(open(path_to_image, 'rb').read())
+            # src = f'data:image/{image_type};base64,{encoded_image.decode()}'
 
             return [
                 dash.no_update,
@@ -856,8 +879,7 @@ def send_form(
                 src,
                 style,
                 dash.no_update,
-                False,
-                False,
+                dash.no_update,
                 False,
                 dash.no_update,
                 'Modifier ma photo'
@@ -891,8 +913,7 @@ def send_form(
                     dash.no_update,
                     dash.no_update,
                     {'display': 'none'},
-                    False,
-                    False,
+                    {'display': 'none'},
                     False,
                     dash.no_update,
                     dash.no_update
@@ -903,7 +924,6 @@ def send_form(
                     date_input is None
                     or hour_input is None
                     or departement_input is None
-                    or etiquette_input is None
                 ):
 
                     style = {
@@ -913,49 +933,22 @@ def send_form(
                         'text-align': 'center',
                         'margin-left': '5%',
                         'margin-top': '5%',
+                    }
+
+                    feedback_style = {
+                        'color': '#DF382F',
+                        'font-size': '0.85em',
+                        'margin-top': '0.5%'
                     }
 
                     if date_input is None:
-                        form_feedbacks = [{'color': '#DF382F'}, False, False, False]
+                        form_feedbacks = [feedback_style, {'display': 'none'}, False]
 
                     elif hour_input is None:
-                        form_feedbacks = [{'display': 'none'}, True, False, False]
+                        form_feedbacks = [{'display': 'none'}, feedback_style, False]
 
                     elif departement_input is None:
-                        form_feedbacks = [{'display': 'none'}, False, True, False]
-
-                    elif etiquette_input is None:
-                        form_feedbacks = [{'display': 'none'}, False, False, True]
-
-                    return [
-                        "Le formulaire est incomplet.",
-                        style,
-                        dash.no_update,
-                        dash.no_update,
-                        dash.no_update,
-                        dash.no_update,
-                        dash.no_update,
-                        dash.no_update,
-                        dash.no_update,
-                    ] + form_feedbacks + [dash.no_update, dash.no_update]
-
-                elif (
-                    ':' not in hour_input
-                    or not is_int(hour_input.split(':')[0])
-                    or not is_int(hour_input.split(':')[1])
-                    or int(hour_input.split(':')[0]) > 24
-                    or int(hour_input.split(':')[1]) > 60
-                ):
-                    style = {
-                        'color': '#F6B52A',
-                        'font-weight': 'bold',
-                        'font-size': '1.2em',
-                        'text-align': 'center',
-                        'margin-left': '5%',
-                        'margin-top': '5%',
-                    }
-
-                    form_feedbacks = [{'display': 'none'}, True, False, False]
+                        form_feedbacks = [{'display': 'none'}, {'display': 'none'}, True]
 
                     return [
                         "Le formulaire est incomplet.",
@@ -990,8 +983,7 @@ def send_form(
                         dash.no_update,
                         dash.no_update,
                         {'display': 'none'},
-                        False,
-                        False,
+                        {'display': 'none'},
                         False,
                         dash.no_update,
                         dash.no_update
@@ -1007,26 +999,34 @@ def send_form(
                         'margin-top': '5%',
                     }
 
+                    hour = datetime.fromisoformat(hour_input).hour
+                    minute = datetime.fromisoformat(hour_input).minute
+
+                    if etiquette_input is None:
+                        etiquette_input = 'none'
+
+                    print(etiquette_input)
+
                     # INSERT BACK-END INSTRUCTIONS
 
-                    # path_to_image = os.path.dirname(os.path.abspath(__file__))
-                    # path_to_image = os.path.join(path_to_image, 'temp.png')
+                    path_to_image = os.path.dirname(os.path.abspath(__file__))
+                    path_to_image = os.path.join(path_to_image, 'temp.png')
 
-                    info_split = info.split('/')
+                    # info_split = info.split('/')
 
-                    upload_id = info_split[-2]
-                    file_name = info_split[-1]
+                    # upload_id = info_split[-2]
+                    # file_name = info_split[-1]
 
-                    path_to_image = os.path.join(
-                        os.path.dirname(
-                            os.path.abspath(__file__),
-                        ),
-                        upload_id,
-                        file_name
-                    )
+                    # path_to_image = os.path.join(
+                    #     os.path.dirname(
+                    #         os.path.abspath(__file__),
+                    #     ),
+                    #     upload_id,
+                    #     file_name
+                    # )
 
                     os.remove(path_to_image)
-                    os.rmdir(os.path.dirname(path_to_image))
+                    # os.rmdir(os.path.dirname(path_to_image))
 
                     return [
                         "Merci pour votre contribution, votre photo a été envoyée avec succès !",
@@ -1039,8 +1039,7 @@ def send_form(
                         '',
                         {'display': 'none'},
                         {'display': 'none'},
-                        False,
-                        False,
+                        {'display': 'none'},
                         False,
                         build_image_upload(),
                         'Ajouter une photo'
@@ -1051,4 +1050,4 @@ def send_form(
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, dev_tools_hot_reload=True, port=8050)  # , host='0.0.0.0'
+    app.run_server(debug=True, dev_tools_hot_reload=True, port=8050, host='0.0.0.0')  # , host='0.0.0.0'
