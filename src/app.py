@@ -677,7 +677,7 @@ app.layout = html.Div(
                         'color': 'white',
                         'margin-top': '15%',
                         'margin-left': '30%',
-                        'width': '85%'
+                        # 'width': '100%'
                     }
                 ),
 
