@@ -1005,9 +1005,8 @@ def send_form(
                     if etiquette_input is None:
                         etiquette_input = 'none'
 
-                    print(etiquette_input)
-
                     # INSERT BACK-END INSTRUCTIONS
+                    print(hour, minute, etiquette_input)
 
                     path_to_image = os.path.dirname(os.path.abspath(__file__))
                     path_to_image = os.path.join(path_to_image, 'temp.png')
@@ -1050,4 +1049,4 @@ def send_form(
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, dev_tools_hot_reload=True, port=8050, host='0.0.0.0')  # , host='0.0.0.0'
+    app.run_server(debug=True, dev_tools_hot_reload=True, port=8050)  # , host='0.0.0.0'
