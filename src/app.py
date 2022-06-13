@@ -1,3 +1,8 @@
+# Copyright (C) 2021, Pyronear contributors.
+
+# This program is licensed under the Apache License version 2.
+# See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0.txt> for full license details.
+
 import base64
 import csv
 import os
@@ -5,7 +10,8 @@ from datetime import date, datetime
 
 import dash
 import dash_bootstrap_components as dbc
-import dash_daq as daq
+import dash_mantine_components as dmc
+# import dash_uploader as du
 import requests
 # Various modules provided by Dash and Dash Leaflet to build the page layout
 from dash import dcc, html
@@ -29,8 +35,11 @@ with requests.Session() as s:
 
 # Setting the options for the type of wildfire
 etiquette_options = [
-    {'label': 'Feu de forêt', 'value': 'wildfire'},
-    {'label': 'Feu industriel', 'value': 'industrial_fire'}
+    {'label': 'Fumée', 'value': 'smoke'},
+    {'label': 'Flammes', 'value': 'fire'},
+    {'label': 'Nuage(s)', 'value': 'clouds'},
+    {'label': 'Éblouissement', 'value': 'glare'},
+    {'label': 'Rien de notable', 'value': 'none'}
 ]
 
 
@@ -44,6 +53,26 @@ def is_int(element):
 
 
 def build_image_upload():
+
+    # upload = du.Upload(
+    #     id='image-upload',
+    #     text='Glisser / déposer une photo ici - ou parcourir',
+    #     text_completed='Vous avez choisi : ',
+    #     text_disabled="Le téléversement n'est plus disponible.",
+    #     cancel_button=True,
+    #     pause_button=False,
+    #     disabled=False,
+    #     filetypes=['png', 'jpeg', 'jpg'],
+    #     max_file_size=1024,
+    #     chunk_size=1,
+    #     default_style={
+    #         'background-color': '#DCE6EA',
+    #         'border-style': 'solid',
+    #         'margin-top': '1%'
+    #     },
+    #     upload_id=None,
+    #     max_files=1,
+    # )
 
     upload = dcc.Upload(
         id='image-upload',
@@ -65,7 +94,7 @@ def build_image_upload():
                             'Glisser / déposer une photo ici ',
                             style={
                                 'color': '#283B3D',
-                                'font-size': '14px',
+                                'font-size': '1.5em',
                             }
                         ),
                         html.A(
@@ -74,7 +103,7 @@ def build_image_upload():
                                 'font-weight': 'bold',
                                 "text-decoration": "underline",
                                 'color': '#283B3D',
-                                'font-size': '14px',
+                                'font-size': '1.5em',
                             }
                         )
                     ]
@@ -85,7 +114,7 @@ def build_image_upload():
                     style={
                         'margin-top': '1%',
                         'color': '#737373',
-                        'font-size': '10px',
+                        'font-size': '1.3em',
                         'font-weight': 'bold',
                     }
                 ),
@@ -124,6 +153,10 @@ app = dash.Dash(
 )
 server = app.server
 
+# Configuring the uploads
+# UPLOAD_FOLDER_ROOT = 'src'
+# du.configure_upload(app, UPLOAD_FOLDER_ROOT)
+
 # We define a few attributes of the app object
 app.title = 'Pyronear - Crowdsourcing platform'
 app.config.suppress_callback_exceptions = True
@@ -144,13 +177,14 @@ link_to_website_button = dbc.NavLink(
                 html.I(
                     className="mx-auto order-0",
                 ),
-                html.Span("à propos de Pyronear"),
+                html.Span("visitez notre site web"),
             ]
         )
     ],
     href="https://pyronear.org",
+    target='_blank',
     style={
-        "font-size": "17px",
+        "font-size": "1.5em",
         "font-weight": "bold",
         "color": "#054546",
         "text-decoration": "underline"
@@ -190,7 +224,7 @@ app.layout = html.Div(
                 html.Div(
                     'Participez à la protection des forêts',
                     style={
-                        'font-size': '3em',
+                        'font-size': '4em',
                         'font-weight': 'bold',
                         'color': '#054546',
                         'margin-top': '5%',
@@ -200,7 +234,7 @@ app.layout = html.Div(
                 html.Div(
                     '🤝 Comment aider ?',
                     style={
-                        'font-size': '2em',
+                        'font-size': '3em',
                         'font-weight': 'bold',
                         'color': '#5BBD8C',
                         'margin-top': '2%',
@@ -213,7 +247,7 @@ app.layout = html.Div(
                         + " qui permet d'aider à la détection de feux de forêts."
                     ),
                     style={
-                        'font-size': '1.3em',
+                        'font-size': '1.7em',
                         'color': '#283B3D',
                         'margin-top': '2%',
                         'width': '90%'
@@ -224,7 +258,7 @@ app.layout = html.Div(
                     "En savoir plus sur notre système de détection",
                     id='know_more_on_detection_button',
                     style={
-                        'font-size': '1em',
+                        'font-size': '1.3em',
                         "text-decoration": "underline",
                         'color': '#F6B52A',
                         'margin-top': '1%',
@@ -285,9 +319,9 @@ app.layout = html.Div(
                 ),
 
                 html.Div(
-                    '📷 Envoyer ma photo',
+                    '📷 Sélectionner ou prendre une photo',
                     style={
-                        'font-size': '2em',
+                        'font-size': '3em',
                         'font-weight': 'bold',
                         'color': 'white',
                         'margin-top': '5%',
@@ -299,9 +333,10 @@ app.layout = html.Div(
                     id='left-column-main-div',
                     children=[
                         html.Div(
-                            'Télécharger une ou plusieurs photo(s)',
+                            id='upload-image-message',
+                            children='Ajouter une photo',
                             style={
-                                'font-size': '1em',
+                                'font-size': '1.7em',
                                 'font-weight': 'bold',
                                 'color': 'white'
                             }
@@ -309,7 +344,9 @@ app.layout = html.Div(
 
                         html.Div(
                             id='image-upload-div',
-                            children=build_image_upload()
+                            children=[
+                                build_image_upload(),
+                            ]
                         ),
 
                         html.Div(
@@ -369,7 +406,7 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     'Date',
                                                     style={
-                                                        'font-size': '1.2em',
+                                                        'font-size': '1.7em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
                                                         'margin-left': '5%'
@@ -381,7 +418,8 @@ app.layout = html.Div(
                                                             id='date-input',
                                                             min_date_allowed=date(2000, 1, 1),
                                                             max_date_allowed=datetime.today(),
-                                                            initial_visible_month=date(2022, 5, 7),
+                                                            initial_visible_month=datetime.today(),
+                                                            # date=datetime.today(),
                                                             display_format='DD/MM/YYYY',
                                                             placeholder='DD/MM/YYYY',
                                                             style={
@@ -389,7 +427,7 @@ app.layout = html.Div(
                                                                 'font-size': '12px',
                                                                 'borderRadius': '0px',
                                                                 'border': 'none',
-                                                                'border-bottom': '1px solid black'
+                                                                'border-bottom': '1px solid black',
                                                             }
                                                         ),
                                                         html.Div(
@@ -401,7 +439,6 @@ app.layout = html.Div(
                                                         )
                                                     ],
                                                     style={
-                                                        'font-size': '1.2em',
                                                         'width': '100%',
                                                         'margin-left': '5%'
                                                     }
@@ -414,31 +451,53 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     'Heure approximative',
                                                     style={
-                                                        'font-size': '1.2em',
+                                                        'font-size': '1.7em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
-                                                        'margin-left': '5%',
-                                                        'margin-top': '3%'
+                                                        'margin-top': '4%'
                                                     }
                                                 ),
-                                                dbc.Input(
+                                                dmc.TimeInput(
                                                     id='hour-input',
-                                                    placeholder='HH:MM',
+                                                    size='lg',
+                                                    radius='xs',
                                                     style={
-                                                        'width': form_inputs_width,
-                                                        'margin-left': '5%',
                                                         'font-color': '#737373',
                                                         'borderRadius': '0px',
                                                         'border': 'none',
-                                                        'border-bottom': '1px solid black'
+                                                        'border-bottom': '1px solid black',
+                                                        'height': '50px'
                                                     }
                                                 ),
-                                                dbc.FormFeedback(
+                                                html.Div(
                                                     "Oops, il semblerait qu'il y ait une erreur",
-                                                    type='invalid',
-                                                    style={'margin-left': '5%'}
+                                                    id='feedback-hour-input',
+                                                    style={
+                                                        'display': 'none'
+                                                    }
                                                 )
-                                            ]
+                                                # dbc.Input(
+                                                #     id='hour-input',
+                                                #     placeholder='HH:MM',
+                                                #     style={
+                                                #         'width': form_inputs_width,
+                                                #         'margin-left': '5%',
+                                                #         'font-color': '#737373',
+                                                #         'borderRadius': '0px',
+                                                #         'border': 'none',
+                                                #         'border-bottom': '1px solid black'
+                                                #     }
+                                                # ),
+                                                # dbc.FormFeedback(
+                                                #     "Oops, il semblerait qu'il y ait une erreur",
+                                                #     type='invalid',
+                                                #     style={'margin-left': '5%'}
+                                                # )
+                                            ],
+                                            style={
+                                                'width': form_inputs_width,
+                                                'margin-left': '5%'
+                                            }
                                         ),
 
                                         html.Div(
@@ -446,10 +505,10 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     'Département',
                                                     style={
-                                                        'font-size': '1.2em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
-                                                        'margin-top': '3%'
+                                                        'margin-top': '4%',
+                                                        'font-size': '1.7em',
                                                     }
                                                 ),
                                                 dbc.Select(
@@ -460,7 +519,9 @@ app.layout = html.Div(
                                                         'color': '#737373',
                                                         'borderRadius': '0px',
                                                         'border': 'none',
-                                                        'border-bottom': '1px solid black'
+                                                        'border-bottom': '1px solid black',
+                                                        'height': '50px',
+                                                        'font-size': '1.5em'
                                                     }
                                                 ),
                                                 dbc.FormFeedback(
@@ -470,18 +531,18 @@ app.layout = html.Div(
                                             ],
                                             style={
                                                 'width': form_inputs_width,
-                                                'margin-left': '5%'
+                                                'margin-left': '5%',
                                             }
                                         ),
                                         html.Div(
                                             [
                                                 dbc.Label(
-                                                    'Étiquette',
+                                                    '[Facultatif] Un élément notable à signaler ?',
                                                     style={
-                                                        'font-size': '1.2em',
+                                                        'font-size': '1.7em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
-                                                        'margin-top': '3%'
+                                                        'margin-top': '4%'
                                                     }
                                                 ),
                                                 dbc.Select(
@@ -492,7 +553,9 @@ app.layout = html.Div(
                                                         'color': '#737373',
                                                         'borderRadius': '0px',
                                                         'border': 'none',
-                                                        'border-bottom': '1px solid black'
+                                                        'border-bottom': '1px solid black',
+                                                        'height': '50px',
+                                                        'font-size': '1.5em'
                                                     }
                                                 ),
                                                 dbc.FormFeedback(
@@ -528,22 +591,36 @@ app.layout = html.Div(
                         html.Div(
                             [
                                 html.Div(
-                                    "En partageant cette photo, j'accepte..."
+                                    "En partageant cette photo, j'accepte qu'elle soit intégrée à un jeu de données"
+                                    + " public et de céder ses droits"
                                 ),
-                                daq.BooleanSwitch(
+                                # daq.BooleanSwitch(
+                                #     id='acceptance-switch',
+                                #     on=False,
+                                #     style={
+                                #         'margin-top': '3%',
+                                #         'height': '50px'
+                                #     },
+                                #     # label="En partageant cette photo, j'accepte..."
+                                # ),
+                                dmc.Switch(
                                     id='acceptance-switch',
-                                    on=False,
-                                    style={'margin-top': '3%'}
-                                    # label="En partageant cette photo, j'accepte..."
-                                ),
+                                    checked=False,
+                                    size='xl',
+                                    style={
+                                        'margin-top': '3%',
+                                        'margin-left': '43%',
+                                    }
+                                )
                             ],
                             style={
                                 'margin-top': '5%',
                                 'margin-left': '5%',
                                 'color': 'white',
                                 'font-weight': 'bold',
-                                'font-size': '1.2em',
-                                'text-align': 'center'
+                                'font-size': '1.4em',
+                                'text-align': 'center',
+
                             }
                         ),
 
@@ -571,14 +648,14 @@ app.layout = html.Div(
                                     'margin-right': '0px',
                                     'background-color': '#5BBD8C',
                                     'font-weight': 'bold',
-                                    'font-size': '1.3em',
+                                    'font-size': '1.7em',
                                     'borderRadius': '0px',
                                     'border': 'none',
-                                    'width': '30%',
+                                    'width': '40%',
                                 }
                             ),
                             style={
-                                'margin-top': '5%',
+                                'margin-top': '10%',
                                 'margin-left': '5%',
                                 'font-color': 'white',
                             }
@@ -594,12 +671,13 @@ app.layout = html.Div(
                 html.Div(
                     'à propos de Pyronear - Site web - mentions légales',
                     style={
-                        'font-size': '14px',
+                        'font-size': '1.4',
                         'align-text': 'center',
                         'font-weight': 'bold',
                         'color': 'white',
                         'margin-top': '15%',
-                        'margin-left': '36%',
+                        'margin-left': '30%',
+                        # 'width': '100%'
                     }
                 ),
 
@@ -699,35 +777,50 @@ def open_close_detection_modal(n1, n2, is_open):
 )
 def upload_action(filename, contents):
     if filename is None:
-        raise PreventUpdate
+        return ''
 
-    # Save file to disk (on server)
-    _, content_string = contents.split(',')
+    else:
+        # Save file to disk (on server)
+        _, content_string = contents.split(',')
 
-    path_to_image = os.path.dirname(os.path.abspath(__file__))
-    path_to_image = os.path.join(path_to_image, 'temp.png')
+        path_to_image = os.path.dirname(os.path.abspath(__file__))
+        path_to_image = os.path.join(path_to_image, 'temp.png')
 
-    with open(path_to_image, 'wb') as f:
-        f.write(base64.b64decode(content_string))
+        with open(path_to_image, 'wb') as f:
+            f.write(base64.b64decode(content_string))
 
-    return f'Latest upload was {filename}'
+        return f'Latest upload was {filename}'
+
+
+# @du.callback(
+#     output=Output('image-upload-info', 'children'),
+#     id='image-upload',
+# )
+# def upload_action(filenames):
+#     if filenames is None or len(filenames) == 0:
+#         raise PreventUpdate
+
+#     path_to_latest_file = filenames[-1]
+
+#     return f'Latest upload: {str(path_to_latest_file)}'
 
 
 @app.callback(
     [
         Output('temp-output', 'children'),
+        Output('temp-output', 'style'),
         Output('date-input', 'date'),
         Output('hour-input', 'value'),
         Output('departement-input', 'value'),
         Output('etiquette-input', 'value'),
-        Output('acceptance-switch', 'on'),
+        Output('acceptance-switch', 'checked'),
         Output('displayed-image', 'src'),
         Output('image-container', 'style'),
         Output('feedback-date-input', 'style'),
-        Output('hour-input', 'invalid'),
+        Output('feedback-hour-input', 'style'),
         Output('departement-input', 'invalid'),
-        Output('etiquette-input', 'invalid'),
-        Output('image-upload-div', 'children')
+        Output('image-upload-div', 'children'),
+        Output('upload-image-message', 'children'),
     ],
     [
         Input('image-upload-info', 'children'),
@@ -739,7 +832,7 @@ def upload_action(filename, contents):
         State('hour-input', 'value'),
         State('departement-input', 'value'),
         State('etiquette-input', 'value'),
-        State('acceptance-switch', 'on'),
+        State('acceptance-switch', 'checked'),
         State('temp-output', 'children')
     ]
 )
@@ -775,9 +868,28 @@ def send_form(
             path_to_image = os.path.join(path_to_image, 'temp.png')
 
             encoded_image = base64.b64encode(open(path_to_image, 'rb').read())
-            src = 'data:image/png;base64,{}'.format(encoded_image.decode())
+            src = f'data:image/png;base64,{encoded_image.decode()}'
+
+            # info_split = info.split('/')
+
+            # upload_id = info_split[-2]
+            # file_name = info_split[-1]
+
+            # path_to_image = os.path.join(
+            #     os.path.dirname(
+            #         os.path.abspath(__file__),
+            #     ),
+            #     upload_id,
+            #     file_name
+            # )
+
+            # image_type = path_to_image[path_to_image.rfind('.') + 1:]
+
+            # encoded_image = base64.b64encode(open(path_to_image, 'rb').read())
+            # src = f'data:image/{image_type};base64,{encoded_image.decode()}'
 
             return [
+                dash.no_update,
                 dash.no_update,
                 dash.no_update,
                 dash.no_update,
@@ -787,10 +899,10 @@ def send_form(
                 src,
                 style,
                 dash.no_update,
+                dash.no_update,
                 False,
-                False,
-                False,
-                dash.no_update
+                dash.no_update,
+                'Modifier ma photo'
             ]
 
     elif triggerer_id == 'send-form-button':
@@ -800,8 +912,19 @@ def send_form(
 
         else:
             if not info_state.startswith('Latest'):
+
+                style = {
+                    'color': '#F6B52A',
+                    'font-weight': 'bold',
+                    'font-size': '1.2em',
+                    'text-align': 'center',
+                    'margin-left': '5%',
+                    'margin-top': '5%',
+                }
+
                 return [
                     "Avez-vous bien ajouté une image ?",
+                    style,
                     dash.no_update,
                     dash.no_update,
                     dash.no_update,
@@ -810,9 +933,9 @@ def send_form(
                     dash.no_update,
                     dash.no_update,
                     {'display': 'none'},
+                    {'display': 'none'},
                     False,
-                    False,
-                    False,
+                    dash.no_update,
                     dash.no_update
                 ]
 
@@ -821,23 +944,35 @@ def send_form(
                     date_input is None
                     or hour_input is None
                     or departement_input is None
-                    or etiquette_input is None
                 ):
+
+                    style = {
+                        'color': '#F6B52A',
+                        'font-weight': 'bold',
+                        'font-size': '1.2em',
+                        'text-align': 'center',
+                        'margin-left': '5%',
+                        'margin-top': '5%',
+                    }
+
+                    feedback_style = {
+                        'color': '#DF382F',
+                        'font-size': '0.85em',
+                        'margin-top': '0.5%'
+                    }
 
                     if date_input is None:
-                        form_feedbacks = [{'color': '#DF382F'}, False, False, False]
+                        form_feedbacks = [feedback_style, {'display': 'none'}, False]
 
                     elif hour_input is None:
-                        form_feedbacks = [{'display': 'none'}, True, False, False]
+                        form_feedbacks = [{'display': 'none'}, feedback_style, False]
 
                     elif departement_input is None:
-                        form_feedbacks = [{'display': 'none'}, False, True, False]
-
-                    elif etiquette_input is None:
-                        form_feedbacks = [{'display': 'none'}, False, False, True]
+                        form_feedbacks = [{'display': 'none'}, {'display': 'none'}, True]
 
                     return [
                         "Le formulaire est incomplet.",
+                        style,
                         dash.no_update,
                         dash.no_update,
                         dash.no_update,
@@ -845,31 +980,21 @@ def send_form(
                         dash.no_update,
                         dash.no_update,
                         dash.no_update,
-                    ] + form_feedbacks + [dash.no_update]
-
-                elif (
-                    ':' not in hour_input
-                    or not is_int(hour_input.split(':')[0])
-                    or not is_int(hour_input.split(':')[1])
-                    or int(hour_input.split(':')[0]) > 24
-                    or int(hour_input.split(':')[1]) > 60
-                ):
-                    form_feedbacks = [{'display': 'none'}, True, False, False]
-
-                    return [
-                        "Le formulaire est incomplet.",
-                        dash.no_update,
-                        dash.no_update,
-                        dash.no_update,
-                        dash.no_update,
-                        dash.no_update,
-                        dash.no_update,
-                        dash.no_update,
-                    ] + form_feedbacks + [dash.no_update]
+                    ] + form_feedbacks + [dash.no_update, dash.no_update]
 
                 elif not acceptance_switch:
+                    style = {
+                        'color': '#F6B52A',
+                        'font-weight': 'bold',
+                        'font-size': '1.2em',
+                        'text-align': 'center',
+                        'margin-left': '5%',
+                        'margin-top': '5%',
+                    }
+
                     return [
                         "Pour valider l'envoi, veuillez accepter les conditions.",
+                        style,
                         dash.no_update,
                         dash.no_update,
                         dash.no_update,
@@ -878,22 +1003,53 @@ def send_form(
                         dash.no_update,
                         dash.no_update,
                         {'display': 'none'},
+                        {'display': 'none'},
                         False,
-                        False,
-                        False,
+                        dash.no_update,
                         dash.no_update
                     ]
 
                 else:
+                    style = {
+                        'color': 'white',
+                        'font-weight': 'bold',
+                        'font-size': '1.2em',
+                        'text-align': 'center',
+                        'margin-left': '5%',
+                        'margin-top': '5%',
+                    }
+
+                    hour = datetime.fromisoformat(hour_input).hour
+                    minute = datetime.fromisoformat(hour_input).minute
+
+                    if etiquette_input is None:
+                        etiquette_input = 'none'
+
                     # INSERT BACK-END INSTRUCTIONS
+                    print(hour, minute, etiquette_input)
 
                     path_to_image = os.path.dirname(os.path.abspath(__file__))
                     path_to_image = os.path.join(path_to_image, 'temp.png')
 
+                    # info_split = info.split('/')
+
+                    # upload_id = info_split[-2]
+                    # file_name = info_split[-1]
+
+                    # path_to_image = os.path.join(
+                    #     os.path.dirname(
+                    #         os.path.abspath(__file__),
+                    #     ),
+                    #     upload_id,
+                    #     file_name
+                    # )
+
                     os.remove(path_to_image)
+                    # os.rmdir(os.path.dirname(path_to_image))
 
                     return [
-                        "Merci pour votre contribution !",
+                        "Merci pour votre contribution, votre photo a été envoyée avec succès !",
+                        style,
                         None,
                         None,
                         None,
@@ -902,10 +1058,10 @@ def send_form(
                         '',
                         {'display': 'none'},
                         {'display': 'none'},
+                        {'display': 'none'},
                         False,
-                        False,
-                        False,
-                        build_image_upload()
+                        build_image_upload(),
+                        'Ajouter une photo'
                     ]
 
     else:
