@@ -95,7 +95,7 @@ def build_image_upload():
                             'Glisser / déposer une photo ici ',
                             style={
                                 'color': '#283B3D',
-                                'font-size': '14px',
+                                'font-size': '1.5em',
                             }
                         ),
                         html.A(
@@ -104,7 +104,7 @@ def build_image_upload():
                                 'font-weight': 'bold',
                                 "text-decoration": "underline",
                                 'color': '#283B3D',
-                                'font-size': '14px',
+                                'font-size': '1.5em',
                             }
                         )
                     ]
@@ -115,7 +115,7 @@ def build_image_upload():
                     style={
                         'margin-top': '1%',
                         'color': '#737373',
-                        'font-size': '10px',
+                        'font-size': '1.3em',
                         'font-weight': 'bold',
                     }
                 ),
@@ -185,7 +185,7 @@ link_to_website_button = dbc.NavLink(
     href="https://pyronear.org",
     target='_blank',
     style={
-        "font-size": "17px",
+        "font-size": "1.5em",
         "font-weight": "bold",
         "color": "#054546",
         "text-decoration": "underline"
@@ -225,7 +225,7 @@ app.layout = html.Div(
                 html.Div(
                     'Participez à la protection des forêts',
                     style={
-                        'font-size': '3em',
+                        'font-size': '4em',
                         'font-weight': 'bold',
                         'color': '#054546',
                         'margin-top': '5%',
@@ -235,7 +235,7 @@ app.layout = html.Div(
                 html.Div(
                     '🤝 Comment aider ?',
                     style={
-                        'font-size': '2em',
+                        'font-size': '3em',
                         'font-weight': 'bold',
                         'color': '#5BBD8C',
                         'margin-top': '2%',
@@ -248,7 +248,7 @@ app.layout = html.Div(
                         + " qui permet d'aider à la détection de feux de forêts."
                     ),
                     style={
-                        'font-size': '1.3em',
+                        'font-size': '1.7em',
                         'color': '#283B3D',
                         'margin-top': '2%',
                         'width': '90%'
@@ -259,7 +259,7 @@ app.layout = html.Div(
                     "En savoir plus sur notre système de détection",
                     id='know_more_on_detection_button',
                     style={
-                        'font-size': '1em',
+                        'font-size': '1.3em',
                         "text-decoration": "underline",
                         'color': '#F6B52A',
                         'margin-top': '1%',
@@ -322,7 +322,7 @@ app.layout = html.Div(
                 html.Div(
                     '📷 Sélectionner ou prendre une photo',
                     style={
-                        'font-size': '2em',
+                        'font-size': '3em',
                         'font-weight': 'bold',
                         'color': 'white',
                         'margin-top': '5%',
@@ -337,7 +337,7 @@ app.layout = html.Div(
                             id='upload-image-message',
                             children='Ajouter une photo',
                             style={
-                                'font-size': '1em',
+                                'font-size': '1.7em',
                                 'font-weight': 'bold',
                                 'color': 'white'
                             }
@@ -407,7 +407,7 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     'Date',
                                                     style={
-                                                        'font-size': '1.2em',
+                                                        'font-size': '1.7em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
                                                         'margin-left': '5%'
@@ -452,19 +452,22 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     'Heure approximative',
                                                     style={
-                                                        'font-size': '1.2em',
+                                                        'font-size': '1.7em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
-                                                        'margin-top': '3%'
+                                                        'margin-top': '4%'
                                                     }
                                                 ),
                                                 dmc.TimeInput(
                                                     id='hour-input',
+                                                    size='lg',
+                                                    radius='xs',
                                                     style={
                                                         'font-color': '#737373',
                                                         'borderRadius': '0px',
                                                         'border': 'none',
-                                                        'border-bottom': '1px solid black'
+                                                        'border-bottom': '1px solid black',
+                                                        'height': '50px'
                                                     }
                                                 ),
                                                 html.Div(
@@ -503,10 +506,10 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     'Département',
                                                     style={
-                                                        'font-size': '1.2em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
-                                                        'margin-top': '3%'
+                                                        'margin-top': '4%',
+                                                        'font-size': '1.7em',
                                                     }
                                                 ),
                                                 dbc.Select(
@@ -517,7 +520,9 @@ app.layout = html.Div(
                                                         'color': '#737373',
                                                         'borderRadius': '0px',
                                                         'border': 'none',
-                                                        'border-bottom': '1px solid black'
+                                                        'border-bottom': '1px solid black',
+                                                        'height': '50px',
+                                                        'font-size': '1.5em'
                                                     }
                                                 ),
                                                 dbc.FormFeedback(
@@ -527,7 +532,7 @@ app.layout = html.Div(
                                             ],
                                             style={
                                                 'width': form_inputs_width,
-                                                'margin-left': '5%'
+                                                'margin-left': '5%',
                                             }
                                         ),
                                         html.Div(
@@ -535,10 +540,10 @@ app.layout = html.Div(
                                                 dbc.Label(
                                                     '[Facultatif] Un élément notable à signaler ?',
                                                     style={
-                                                        'font-size': '1.2em',
+                                                        'font-size': '1.7em',
                                                         'font-weight': 'bold',
                                                         'color': '#283B3D',
-                                                        'margin-top': '3%'
+                                                        'margin-top': '4%'
                                                     }
                                                 ),
                                                 dbc.Select(
@@ -549,7 +554,9 @@ app.layout = html.Div(
                                                         'color': '#737373',
                                                         'borderRadius': '0px',
                                                         'border': 'none',
-                                                        'border-bottom': '1px solid black'
+                                                        'border-bottom': '1px solid black',
+                                                        'height': '50px',
+                                                        'font-size': '1.5em'
                                                     }
                                                 ),
                                                 dbc.FormFeedback(
@@ -588,20 +595,33 @@ app.layout = html.Div(
                                     "En partageant cette photo, j'accepte qu'elle soit intégrée à un jeu de données"
                                     + " public et de céder ses droits"
                                 ),
-                                daq.BooleanSwitch(
+                                # daq.BooleanSwitch(
+                                #     id='acceptance-switch',
+                                #     on=False,
+                                #     style={
+                                #         'margin-top': '3%',
+                                #         'height': '50px'
+                                #     },
+                                #     # label="En partageant cette photo, j'accepte..."
+                                # ),
+                                dmc.Switch(
                                     id='acceptance-switch',
-                                    on=False,
-                                    style={'margin-top': '3%'}
-                                    # label="En partageant cette photo, j'accepte..."
-                                ),
+                                    checked=False,
+                                    size='xl',
+                                    style={
+                                        'margin-top': '3%',
+                                        'margin-left': '43%',
+                                    }
+                                )
                             ],
                             style={
                                 'margin-top': '5%',
                                 'margin-left': '5%',
                                 'color': 'white',
                                 'font-weight': 'bold',
-                                'font-size': '1.2em',
-                                'text-align': 'center'
+                                'font-size': '1.4em',
+                                'text-align': 'center',
+
                             }
                         ),
 
@@ -629,14 +649,14 @@ app.layout = html.Div(
                                     'margin-right': '0px',
                                     'background-color': '#5BBD8C',
                                     'font-weight': 'bold',
-                                    'font-size': '1.3em',
+                                    'font-size': '1.7em',
                                     'borderRadius': '0px',
                                     'border': 'none',
-                                    'width': '30%',
+                                    'width': '40%',
                                 }
                             ),
                             style={
-                                'margin-top': '5%',
+                                'margin-top': '10%',
                                 'margin-left': '5%',
                                 'font-color': 'white',
                             }
@@ -652,12 +672,13 @@ app.layout = html.Div(
                 html.Div(
                     'à propos de Pyronear - Site web - mentions légales',
                     style={
-                        'font-size': '14px',
+                        'font-size': '1.4',
                         'align-text': 'center',
                         'font-weight': 'bold',
                         'color': 'white',
                         'margin-top': '15%',
-                        'margin-left': '36%',
+                        'margin-left': '30%',
+                        'width': '85%'
                     }
                 ),
 
@@ -793,7 +814,7 @@ def upload_action(filename, contents):
         Output('hour-input', 'value'),
         Output('departement-input', 'value'),
         Output('etiquette-input', 'value'),
-        Output('acceptance-switch', 'on'),
+        Output('acceptance-switch', 'checked'),
         Output('displayed-image', 'src'),
         Output('image-container', 'style'),
         Output('feedback-date-input', 'style'),
@@ -812,7 +833,7 @@ def upload_action(filename, contents):
         State('hour-input', 'value'),
         State('departement-input', 'value'),
         State('etiquette-input', 'value'),
-        State('acceptance-switch', 'on'),
+        State('acceptance-switch', 'checked'),
         State('temp-output', 'children')
     ]
 )
@@ -1049,4 +1070,4 @@ def send_form(
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, dev_tools_hot_reload=True, port=8050)  # , host='0.0.0.0'
+    app.run_server(debug=True, dev_tools_hot_reload=True, port=8050, host='0.0.0.0')  # , host='0.0.0.0'
