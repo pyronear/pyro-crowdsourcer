@@ -1,0 +1,34 @@
+[tool.mypy]
+files = "src/*.py"
+show_error_codes = true
+pretty = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+check_untyped_defs = true
+implicit_reexport = false
+
+[[tool.mypy.overrides]]
+module = [
+    "dash.*",
+    "dash_bootstrap_components",
+    "dash_mantine_components",
+    "user_agents",
+    "requests",
+]
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
+known_third_party = ["dash"]
+
+[tool.pydocstyle]
+select = "D300,D301,D417"
+match = ".*\\.py"
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.black]
+line-length = 120
+target-version = ['py38']

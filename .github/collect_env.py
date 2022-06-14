@@ -19,6 +19,7 @@ from collections import namedtuple
 
 try:
     import streamlit
+
     SL_AVAILABLE = True
 except (ImportError, NameError, AttributeError, OSError):
     SL_AVAILABLE = False
@@ -27,17 +28,19 @@ PY3 = sys.version_info >= (3, 0)
 
 
 # System Environment Information
-SystemEnv = namedtuple('SystemEnv', [
-    'streamlit_version',
-    'os',
-    'python_version',
-])
+SystemEnv = namedtuple(
+    "SystemEnv",
+    [
+        "streamlit_version",
+        "os",
+        "python_version",
+    ],
+)
 
 
 def run(command):
     """Returns (return-code, stdout, stderr)"""
-    p = subprocess.Popen(command, stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE, shell=True)
+    p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, err = p.communicate()
     rc = p.returncode
     if PY3:
@@ -67,48 +70,47 @@ def run_and_parse_first_match(run_lambda, command, regex):
 
 
 def get_platform():
-    if sys.platform.startswith('linux'):
-        return 'linux'
-    elif sys.platform.startswith('win32'):
-        return 'win32'
-    elif sys.platform.startswith('cygwin'):
-        return 'cygwin'
-    elif sys.platform.startswith('darwin'):
-        return 'darwin'
+    if sys.platform.startswith("linux"):
+        return "linux"
+    elif sys.platform.startswith("win32"):
+        return "win32"
+    elif sys.platform.startswith("cygwin"):
+        return "cygwin"
+    elif sys.platform.startswith("darwin"):
+        return "darwin"
     else:
         return sys.platform
 
 
 def get_mac_version(run_lambda):
-    return run_and_parse_first_match(run_lambda, 'sw_vers -productVersion', r'(.*)')
+    return run_and_parse_first_match(run_lambda, "sw_vers -productVersion", r"(.*)")
 
 
 def get_windows_version(run_lambda):
-    return run_and_read_all(run_lambda, 'wmic os get Caption | findstr /v Caption')
+    return run_and_read_all(run_lambda, "wmic os get Caption | findstr /v Caption")
 
 
 def get_lsb_version(run_lambda):
-    return run_and_parse_first_match(run_lambda, 'lsb_release -a', r'Description:\t(.*)')
+    return run_and_parse_first_match(run_lambda, "lsb_release -a", r"Description:\t(.*)")
 
 
 def check_release_file(run_lambda):
-    return run_and_parse_first_match(run_lambda, 'cat /etc/*-release',
-                                     r'PRETTY_NAME="(.*)"')
+    return run_and_parse_first_match(run_lambda, "cat /etc/*-release", r'PRETTY_NAME="(.*)"')
 
 
 def get_os(run_lambda):
     platform = get_platform()
 
-    if platform == 'win32' or platform == 'cygwin':
+    if platform == "win32" or platform == "cygwin":
         return get_windows_version(run_lambda)
 
-    if platform == 'darwin':
+    if platform == "darwin":
         version = get_mac_version(run_lambda)
         if version is None:
             return None
-        return 'Mac OSX {}'.format(version)
+        return "Mac OSX {}".format(version)
 
-    if platform == 'linux':
+    if platform == "linux":
         # Ubuntu/Debian based
         desc = get_lsb_version(run_lambda)
         if desc is not None:
@@ -128,7 +130,7 @@ def get_os(run_lambda):
 def get_env_info():
     run_lambda = run
 
-    streamlit_str = streamlit.__version__ if SL_AVAILABLE else 'N/A'
+    streamlit_str = streamlit.__version__ if SL_AVAILABLE else "N/A"
 
     return SystemEnv(
         streamlit_version=streamlit_str,
@@ -145,14 +147,14 @@ Python version: {python_version}
 
 
 def pretty_str(envinfo):
-    def replace_nones(dct, replacement='Could not collect'):
+    def replace_nones(dct, replacement="Could not collect"):
         for key in dct.keys():
             if dct[key] is not None:
                 continue
             dct[key] = replacement
         return dct
 
-    def replace_bools(dct, true='Yes', false='No'):
+    def replace_bools(dct, true="Yes", false="No"):
         for key in dct.keys():
             if dct[key] is True:
                 dct[key] = true
@@ -162,8 +164,8 @@ def pretty_str(envinfo):
 
     def maybe_start_on_next_line(string):
         # If `string` is multiline, prepend a \n to it.
-        if string is not None and len(string.split('\n')) > 1:
-            return '\n{}\n'.format(string)
+        if string is not None and len(string.split("\n")) > 1:
+            return "\n{}\n".format(string)
         return string
 
     mutable_dict = envinfo._asdict()
@@ -191,5 +193,5 @@ def main():
     print(output)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
