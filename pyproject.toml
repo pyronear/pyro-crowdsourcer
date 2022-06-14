@@ -15,6 +15,7 @@ module = [
     "dash_mantine_components",
     "user_agents",
     "requests",
+    "pyrostorage",
 ]
 ignore_missing_imports = true
 
