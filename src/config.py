@@ -3,10 +3,14 @@
 # This program is licensed under the Apache License version 2.
 # See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0.txt> for full license details.
 
-import json
+import os
+from dotenv import load_dotenv
 
-# import french departement list
-with open("src/static/departements-region.json") as f:
-    dpt = json.load(f)
+__all__ = ["API_URL", "API_LOGIN", "API_PWD"]
 
-deps = [f"{d['num_dep']} - {d['dep_name']}" for d in dpt]
+# If there is an .env, load it
+load_dotenv()
+
+API_URL: str = os.environ.get("API_URL", "")
+API_LOGIN: str = os.environ.get("API_LOGIN", "")
+API_PWD: str = os.environ.get("API_PWD", "")
