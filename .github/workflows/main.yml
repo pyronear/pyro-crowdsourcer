@@ -33,6 +33,6 @@ jobs:
 
       - name: Run demo
         run: |
-          screen -dm python src/app.py
+          screen -dm python src/main.py
           sleep 10
           curl http://localhost:8050/
