@@ -21,8 +21,8 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from user_agents import parse
 
-from services import api_client
 import config as cfg
+from services import api_client
 
 ########################################################################################################################
 # Utils ----------------------------------------------------------------------------------------------------------------
@@ -986,4 +986,14 @@ def send_form(
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, dev_tools_hot_reload=True, port=8050)  # , host='0.0.0.0'
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Pyronear crowdsourcing web-app", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+
+    parser.add_argument("--host", type=str, default="127.0.0.1", help="Host of the server")
+    parser.add_argument("--port", type=int, default=8050, help="Port to run the server on")
+    args = parser.parse_args()
+
+    app.run_server(host=args.host, port=args.port, debug=cfg.DEBUG, dev_tools_hot_reload=cfg.DEBUG)
