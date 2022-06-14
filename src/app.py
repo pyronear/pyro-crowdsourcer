@@ -21,6 +21,9 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from user_agents import parse
 
+from services import api_client
+import config as cfg
+
 ########################################################################################################################
 # Utils ----------------------------------------------------------------------------------------------------------------
 
@@ -929,9 +932,21 @@ def send_form(
 
                     # INSERT BACK-END INSTRUCTIONS
                     print(hour, minute, etiquette_input)
-
-                    path_to_image = os.path.dirname(os.path.abspath(__file__))
-                    path_to_image = os.path.join(path_to_image, "temp.png")
+                    # Create backend entries
+                    response = api_client.create_media(media_type="image")
+                    # Check token expiration
+                    if response.status_code == 401:
+                        api_client.refresh_token(cfg.API_LOGIN, cfg.API_PWD)
+                        response = api_client.create_media(media_type="image")
+                    media_id = response.json()["id"]
+                    annot_id = api_client.create_annotation(media_id=media_id).json()["id"]
+                    # Upload everything
+                    folder = os.path.dirname(os.path.abspath(__file__))
+                    img_path = os.path.join(folder, "temp.png")
+                    with open(img_path, "rb") as f:
+                        api_client.upload_media(media_id, f.read())
+                    with open(annot_path, "rb") as f:
+                        api_client.upload_annotation(annot_id, f.read())
 
                     # info_split = info.split('/')
 
