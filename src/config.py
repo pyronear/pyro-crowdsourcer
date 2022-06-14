@@ -6,7 +6,7 @@
 import json
 
 # import french departement list
-with open("src/static/departements-region.json") as deps:
-    dpt = json.load(deps)
+with open("src/static/departements-region.json") as f:
+    dpt = json.load(f)
 
-deps = [str(d["num_dep"]) + " - " + d["dep_name"] for d in dpt]
+deps = [f"{d['num_dep']} - {d['dep_name']}" for d in dpt]
