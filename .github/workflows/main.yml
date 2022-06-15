@@ -34,5 +34,5 @@ jobs:
       - name: Run demo
         run: |
           screen -dm python src/main.py
-          sleep 10
+          sleep 15
           curl http://localhost:8050/
