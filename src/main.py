@@ -5,16 +5,16 @@
 
 import base64
 import csv
+import json
 import os
 from datetime import date, datetime
 
 import dash
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
-
+import pytz
 # import dash_uploader as du
 import requests
-
 # Various modules provided by Dash and Dash Leaflet to build the page layout
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
@@ -36,15 +36,15 @@ with requests.Session() as s:
     decoded_content = download.content.decode("utf-8")
 
     cr = csv.reader(decoded_content.splitlines(), delimiter=",", quotechar='"', quoting=csv.QUOTE_ALL)
-    department_options = [{"label": f"{code} - {name}", "value": name} for code, name, _, _ in cr][1:]
+    department_options = [{"label": f"{code} - {name}", "value": code} for code, name, _, _ in cr][1:]
 
 # Setting the options for the type of wildfire
 etiquette_options = [
-    {"label": "Fumée", "value": "smoke"},
-    {"label": "Flammes", "value": "fire"},
-    {"label": "Nuage(s)", "value": "clouds"},
-    {"label": "Éblouissement", "value": "glare"},
-    {"label": "Rien de notable", "value": "none"},
+    {"label": "Fumée", "value": 1},
+    {"label": "Flammes", "value": 2},
+    {"label": "Nuage(s)", "value": 3},
+    {"label": "Éblouissement", "value": 4},
+    {"label": "Rien de notable", "value": 0},
 ]
 
 
@@ -924,14 +924,37 @@ def send_form(
                         "margin-top": "5%",
                     }
 
-                    hour = datetime.fromisoformat(hour_input).hour
-                    minute = datetime.fromisoformat(hour_input).minute
+                    # Preparing the annotations
 
+                    # -- Preparing the "created_at" input
+                    naive_dt = datetime.fromisoformat(date_input)
+                    year = naive_dt.year
+
+                    naive_dt = naive_dt.replace(
+                        hour=datetime.fromisoformat(hour_input).hour,
+                        minute=datetime.fromisoformat(hour_input).minute,
+                    )
+
+                    beginning_dst = datetime(year, 3, 27, 2, 0, 0)
+                    end_dst = datetime(year, 10, 30, 3, 0, 0)
+
+                    is_dst = naive_dt >= beginning_dst and naive_dt < end_dst
+
+                    created_at = pytz.timezone('Europe/Paris').localize(naive_dt, is_dst=is_dst)
+
+                    # -- Labelling as 5 if no etiquette was provided
                     if etiquette_input is None:
-                        etiquette_input = "none"
+                        etiquette_input = 5
 
-                    # INSERT BACK-END INSTRUCTIONS
-                    print(hour, minute, etiquette_input)
+                    # -- Building the dict
+                    annotations = {
+                        'created_at': str(created_at),
+                        'country': 'FR',
+                        'region': departement_input,
+                        'label': int(etiquette_input)
+                    }
+                    annotations = json.dumps(annotations).encode('utf-8')
+
                     # Create backend entries
                     response = api_client.create_media(media_type="image")
                     # Check token expiration
@@ -945,8 +968,7 @@ def send_form(
                     img_path = os.path.join(folder, "temp.png")
                     with open(img_path, "rb") as f:
                         api_client.upload_media(media_id, f.read())
-                    with open(annot_path, "rb") as f:
-                        api_client.upload_annotation(annot_id, f.read())
+                    api_client.upload_annotation(annot_id, annotations)
 
                     # info_split = info.split('/')
 
@@ -961,7 +983,7 @@ def send_form(
                     #     file_name
                     # )
 
-                    os.remove(path_to_image)
+                    os.remove(img_path)
                     # os.rmdir(os.path.dirname(path_to_image))
 
                     return [
