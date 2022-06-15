@@ -5,8 +5,10 @@
 
 import base64
 import csv
+import json
 import os
 from datetime import date, datetime
+from pathlib import Path
 
 import dash
 import dash_bootstrap_components as dbc
@@ -19,7 +21,11 @@ import requests
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+from dateutil import tz
 from user_agents import parse
+
+import config as cfg
+from services import api_client
 
 ########################################################################################################################
 # Utils ----------------------------------------------------------------------------------------------------------------
@@ -33,16 +39,20 @@ with requests.Session() as s:
     decoded_content = download.content.decode("utf-8")
 
     cr = csv.reader(decoded_content.splitlines(), delimiter=",", quotechar='"', quoting=csv.QUOTE_ALL)
-    department_options = [{"label": f"{code} - {name}", "value": name} for code, name, _, _ in cr][1:]
+    DEPARTMENTS = [{"label": f"{code} - {name}", "value": code} for code, name, _, _ in cr][1:]
 
 # Setting the options for the type of wildfire
-etiquette_options = [
-    {"label": "Fumée", "value": "smoke"},
-    {"label": "Flammes", "value": "fire"},
-    {"label": "Nuage(s)", "value": "clouds"},
-    {"label": "Éblouissement", "value": "glare"},
-    {"label": "Rien de notable", "value": "none"},
+LABELS = [
+    {"label": "Fumée", "value": 1},
+    {"label": "Flammes", "value": 2},
+    {"label": "Nuage(s)", "value": 3},
+    {"label": "Éblouissement", "value": 4},
+    {"label": "Rien de notable", "value": 0},
 ]
+
+# Cache management
+CACHE = Path(cfg.CACHE_FOLDER)
+CACHE.mkdir(exist_ok=True)
 
 
 def is_int(element):
@@ -447,7 +457,7 @@ app.layout = html.Div(
                                                 dbc.Select(
                                                     id="departement-input",
                                                     placeholder="Sélectionnez",
-                                                    options=department_options,
+                                                    options=DEPARTMENTS,
                                                     style={
                                                         "color": "#737373",
                                                         "borderRadius": "0px",
@@ -481,7 +491,7 @@ app.layout = html.Div(
                                                 dbc.Select(
                                                     id="etiquette-input",
                                                     placeholder="Sélectionnez",
-                                                    options=etiquette_options,
+                                                    options=LABELS,
                                                     style={
                                                         "color": "#737373",
                                                         "borderRadius": "0px",
@@ -692,10 +702,9 @@ def upload_action(filename, contents):
         # Save file to disk (on server)
         _, content_string = contents.split(",")
 
-        path_to_image = os.path.dirname(os.path.abspath(__file__))
-        path_to_image = os.path.join(path_to_image, "temp.png")
+        img_path = CACHE.joinpath("temp.jpg")
 
-        with open(path_to_image, "wb") as f:
+        with open(img_path, "wb") as f:
             f.write(base64.b64decode(content_string))
 
         return f"Latest upload was {filename}"
@@ -770,10 +779,10 @@ def send_form(
                 "margin-top": "3%",
             }
 
-            path_to_image = os.path.dirname(os.path.abspath(__file__))
-            path_to_image = os.path.join(path_to_image, "temp.png")
+            img_path = CACHE.joinpath("temp.jpg")
 
-            encoded_image = base64.b64encode(open(path_to_image, "rb").read())
+            with open(img_path, "rb") as f:
+                encoded_image = base64.b64encode(f.read())
             src = f"data:image/png;base64,{encoded_image.decode()}"
 
             # info_split = info.split('/')
@@ -921,17 +930,45 @@ def send_form(
                         "margin-top": "5%",
                     }
 
-                    hour = datetime.fromisoformat(hour_input).hour
-                    minute = datetime.fromisoformat(hour_input).minute
+                    # Preparing the annotations
+                    _date = datetime.fromisoformat(date_input)
+                    _time = datetime.fromisoformat(hour_input)
 
-                    if etiquette_input is None:
-                        etiquette_input = "none"
+                    created_at = datetime(
+                        _date.year,
+                        _date.month,
+                        _date.day,
+                        _time.hour,
+                        _time.minute,
+                        _time.second,
+                        tzinfo=tz.gettz("Europe/Paris"),
+                    )
 
-                    # INSERT BACK-END INSTRUCTIONS
-                    print(hour, minute, etiquette_input)
+                    # -- Labelling as 5 if no etiquette was provided
+                    label = etiquette_input or 5
 
-                    path_to_image = os.path.dirname(os.path.abspath(__file__))
-                    path_to_image = os.path.join(path_to_image, "temp.png")
+                    # -- Building the dict
+                    annotations = {
+                        "created_at": str(created_at),
+                        "country": "FR",
+                        "region": departement_input,
+                        "label": int(label),
+                    }
+                    payload = json.dumps(annotations).encode("utf-8")
+
+                    # Create backend entries
+                    response = api_client.create_media(media_type="image")
+                    # Check token expiration
+                    if response.status_code == 401:
+                        api_client.refresh_token(cfg.API_LOGIN, cfg.API_PWD)
+                        response = api_client.create_media(media_type="image")
+                    media_id = response.json()["id"]
+                    annot_id = api_client.create_annotation(media_id=media_id).json()["id"]
+                    # Upload everything
+                    img_path = CACHE.joinpath("temp.jpg")
+                    with open(img_path, "rb") as f:
+                        api_client.upload_media(media_id, f.read())
+                    api_client.upload_annotation(annot_id, payload)
 
                     # info_split = info.split('/')
 
@@ -946,7 +983,7 @@ def send_form(
                     #     file_name
                     # )
 
-                    os.remove(path_to_image)
+                    os.remove(img_path)
                     # os.rmdir(os.path.dirname(path_to_image))
 
                     return [
@@ -971,4 +1008,14 @@ def send_form(
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, dev_tools_hot_reload=True, port=8050)  # , host='0.0.0.0'
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Pyronear crowdsourcing web-app", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+
+    parser.add_argument("--host", type=str, default="127.0.0.1", help="Host of the server")
+    parser.add_argument("--port", type=int, default=8050, help="Port to run the server on")
+    args = parser.parse_args()
+
+    app.run_server(host=args.host, port=args.port, debug=cfg.DEBUG, dev_tools_hot_reload=cfg.DEBUG)

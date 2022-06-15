@@ -33,7 +33,7 @@ The app was designed using [Streamlit](https://streamlit.io/) to crowdsource vis
 Run your app in your default browser with:
 
 ```shell
-streamlit run src/app.py
+streamlit run src/main.py
 ```
 
 

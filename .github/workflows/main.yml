@@ -32,7 +32,11 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run demo
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_LOGIN: ${{ secrets.API_LOGIN }}
+          API_PWD: ${{ secrets.API_PWD }}
         run: |
-          screen -dm python src/app.py
+          screen -dm python src/main.py
           sleep 10
           curl http://localhost:8050/
