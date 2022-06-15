@@ -10,7 +10,7 @@
 
 ### Prerequisites
 
-Python 3.6 (or higher) and [pip](https://pip.pypa.io/en/stable/) are required to install docTR. 
+Python 3.6 (or higher) and [pip](https://pip.pypa.io/en/stable/) are required to install this project. 
 
 ### Developer mode
 Alternatively, you can install it from source, which will require you to install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
@@ -24,9 +24,9 @@ pip install -r pyro-crowdsourcer/requirements.txt
 
 ## Usage
 
-![App screenshot](https://user-images.githubusercontent.com/26927750/157908819-c725462a-6fbf-4730-974e-1254001af870.png)
+![App screenshot](https://user-images.githubusercontent.com/26927750/173859047-d4e0a9ad-10d8-44cf-9e8b-a0835717b1b6.png)
 
-The app was designed using [Streamlit](https://streamlit.io/) to crowdsource visual situations that can be encountered for wildfire surveillance.
+The app was designed using [Dash](https://plotly.com/dash/) to crowdsource visual situations that can be encountered for wildfire surveillance.
 
 ### Running it locally
 
@@ -42,14 +42,13 @@ streamlit run src/main.py
 If you wish to deploy containerized environments, you can use the provided Dockerfile to build a docker image:
 
 ```shell
-docker build . -t <YOUR_IMAGE_TAG>
-docker run -d -p 8001:8501 <YOUR_IMAGE_TAG>
+docker-compose up -d --build
 ```
 
 
 ## Contributing
 
-If you scrolled down to this section, you most likely appreciate open source. Do you feel like extending the range of our supported characters? Or perhaps submitting a paper implementation? Or contributing in any other way?
+If you scrolled down to this section, you most likely appreciate open source. Do you feel like helping with unresolved issues? Or perhaps submitting a new feature idea? Or contributing in any other way?
 
 You're in luck, we compiled a short guide (cf. [`CONTRIBUTING`](CONTRIBUTING.md)) for you to easily do so!
 
