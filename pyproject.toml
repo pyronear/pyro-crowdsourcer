@@ -16,6 +16,7 @@ module = [
     "user_agents",
     "requests",
     "pyrostorage",
+    "dateutil",
 ]
 ignore_missing_imports = true
 

@@ -8,17 +8,20 @@ import csv
 import json
 import os
 from datetime import date, datetime
+from pathlib import Path
 
 import dash
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
-import pytz
+
 # import dash_uploader as du
 import requests
+
 # Various modules provided by Dash and Dash Leaflet to build the page layout
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+from dateutil import tz
 from user_agents import parse
 
 import config as cfg
@@ -36,16 +39,20 @@ with requests.Session() as s:
     decoded_content = download.content.decode("utf-8")
 
     cr = csv.reader(decoded_content.splitlines(), delimiter=",", quotechar='"', quoting=csv.QUOTE_ALL)
-    department_options = [{"label": f"{code} - {name}", "value": code} for code, name, _, _ in cr][1:]
+    DEPARTMENTS = [{"label": f"{code} - {name}", "value": code} for code, name, _, _ in cr][1:]
 
 # Setting the options for the type of wildfire
-etiquette_options = [
+LABELS = [
     {"label": "Fumée", "value": 1},
     {"label": "Flammes", "value": 2},
     {"label": "Nuage(s)", "value": 3},
     {"label": "Éblouissement", "value": 4},
     {"label": "Rien de notable", "value": 0},
 ]
+
+# Cache management
+CACHE = Path(cfg.CACHE_FOLDER)
+CACHE.mkdir(exist_ok=True)
 
 
 def is_int(element):
@@ -450,7 +457,7 @@ app.layout = html.Div(
                                                 dbc.Select(
                                                     id="departement-input",
                                                     placeholder="Sélectionnez",
-                                                    options=department_options,
+                                                    options=DEPARTMENTS,
                                                     style={
                                                         "color": "#737373",
                                                         "borderRadius": "0px",
@@ -484,7 +491,7 @@ app.layout = html.Div(
                                                 dbc.Select(
                                                     id="etiquette-input",
                                                     placeholder="Sélectionnez",
-                                                    options=etiquette_options,
+                                                    options=LABELS,
                                                     style={
                                                         "color": "#737373",
                                                         "borderRadius": "0px",
@@ -695,10 +702,9 @@ def upload_action(filename, contents):
         # Save file to disk (on server)
         _, content_string = contents.split(",")
 
-        path_to_image = os.path.dirname(os.path.abspath(__file__))
-        path_to_image = os.path.join(path_to_image, "temp.png")
+        img_path = CACHE.joinpath("temp.jpg")
 
-        with open(path_to_image, "wb") as f:
+        with open(img_path, "wb") as f:
             f.write(base64.b64decode(content_string))
 
         return f"Latest upload was {filename}"
@@ -773,10 +779,10 @@ def send_form(
                 "margin-top": "3%",
             }
 
-            path_to_image = os.path.dirname(os.path.abspath(__file__))
-            path_to_image = os.path.join(path_to_image, "temp.png")
+            img_path = CACHE.joinpath("temp.jpg")
 
-            encoded_image = base64.b64encode(open(path_to_image, "rb").read())
+            with open(img_path, "rb") as f:
+                encoded_image = base64.b64encode(f.read())
             src = f"data:image/png;base64,{encoded_image.decode()}"
 
             # info_split = info.split('/')
@@ -925,35 +931,30 @@ def send_form(
                     }
 
                     # Preparing the annotations
+                    _date = datetime.fromisoformat(date_input)
+                    _time = datetime.fromisoformat(hour_input)
 
-                    # -- Preparing the "created_at" input
-                    naive_dt = datetime.fromisoformat(date_input)
-                    year = naive_dt.year
-
-                    naive_dt = naive_dt.replace(
-                        hour=datetime.fromisoformat(hour_input).hour,
-                        minute=datetime.fromisoformat(hour_input).minute,
+                    created_at = datetime(
+                        _date.year,
+                        _date.month,
+                        _date.day,
+                        _time.hour,
+                        _time.minute,
+                        _time.second,
+                        tzinfo=tz.gettz("Europe/Paris"),
                     )
 
-                    beginning_dst = datetime(year, 3, 27, 2, 0, 0)
-                    end_dst = datetime(year, 10, 30, 3, 0, 0)
-
-                    is_dst = naive_dt >= beginning_dst and naive_dt < end_dst
-
-                    created_at = pytz.timezone('Europe/Paris').localize(naive_dt, is_dst=is_dst)
-
                     # -- Labelling as 5 if no etiquette was provided
-                    if etiquette_input is None:
-                        etiquette_input = 5
+                    label = etiquette_input or 5
 
                     # -- Building the dict
                     annotations = {
-                        'created_at': str(created_at),
-                        'country': 'FR',
-                        'region': departement_input,
-                        'label': int(etiquette_input)
+                        "created_at": str(created_at),
+                        "country": "FR",
+                        "region": departement_input,
+                        "label": int(label),
                     }
-                    annotations = json.dumps(annotations).encode('utf-8')
+                    payload = json.dumps(annotations).encode("utf-8")
 
                     # Create backend entries
                     response = api_client.create_media(media_type="image")
@@ -964,11 +965,10 @@ def send_form(
                     media_id = response.json()["id"]
                     annot_id = api_client.create_annotation(media_id=media_id).json()["id"]
                     # Upload everything
-                    folder = os.path.dirname(os.path.abspath(__file__))
-                    img_path = os.path.join(folder, "temp.png")
+                    img_path = CACHE.joinpath("temp.jpg")
                     with open(img_path, "rb") as f:
                         api_client.upload_media(media_id, f.read())
-                    api_client.upload_annotation(annot_id, annotations)
+                    api_client.upload_annotation(annot_id, payload)
 
                     # info_split = info.split('/')
 
