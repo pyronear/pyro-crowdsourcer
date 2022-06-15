@@ -9,7 +9,6 @@ Whatever the way you wish to contribute to the project, please respect the [code
 ## Codebase structure
 
 - [src](https://github.com/pyronear/pyro-crowdsourcer/blob/main/src) - The actual codebase
-- [scripts](https://github.com/pyronear/pyro-crowdsourcer/blob/main/scripts) - Example and utilities scripts
 
 
 
