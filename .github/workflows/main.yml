@@ -40,3 +40,21 @@ jobs:
           screen -dm python src/main.py
           sleep 10
           curl http://localhost:8050/
+
+    headers:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python: [3.7]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: x64
+      - name: Run unittests
+        run: python .github/validate_headers.py
