@@ -22,7 +22,9 @@ ignore_missing_imports = true
 
 [tool.isort]
 profile = "black"
-known_third_party = ["dash"]
+line_length = 120
+src_paths = ["src/"]
+skip_glob = ["**/__init__.py"]
 
 [tool.pydocstyle]
 select = "D300,D301,D417"
