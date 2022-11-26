@@ -18,6 +18,7 @@ This project uses the following integrations to ensure proper codebase maintenan
 
 - [Github Worklow](https://help.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow) - run jobs for package build and coverage
 - [Codacy](https://www.codacy.com/) - analyzes commits for code quality
+- [Heroku](https://www.heroku.com/) - where the app is deployed from the main branch
 
 As a contributor, you will only have to ensure coverage of your code by adding appropriate unit testing of your code.
 
@@ -75,23 +76,11 @@ To run all quality checks together
 make quality
 ```
 
-##### Lint verification
-
-To ensure that your incoming PR complies with the lint settings, you need to install [flake8](https://flake8.pycqa.org/en/latest/) and run the following command from the repository's root folder:
+The previous command won't modify anything in your codebase. Some fixes (import ordering and code formatting) can be done automatically using the following command:
 
 ```shell
-flake8 ./
+make style
 ```
-This will read the `.flake8` setting file and let you know whether your commits need some adjustments.
-
-##### Import order
-
-In order to ensure there is a common import order convention, run [isort](https://github.com/PyCQA/isort) as follows:
-
-```shell
-isort **/*.py
-```
-This will reorder the imports of your local files.
 
 ### Submit your modifications
 

@@ -9,3 +9,11 @@ quality:
 style:
 	isort .
 	black .
+
+# Run the docker
+run:
+	docker-compose up -d --build
+
+# Run the docker
+stop:
+	docker-compose down
